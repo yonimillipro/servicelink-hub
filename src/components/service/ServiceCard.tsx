@@ -1,32 +1,17 @@
 import { Link } from "react-router-dom";
 import { MapPin, Star, Clock } from "lucide-react";
 import { cn } from "@/lib/utils";
-
-export interface Service {
-  id: string;
-  title: string;
-  description: string;
-  price: number;
-  priceType: "fixed" | "starting_from" | "negotiable";
-  category: string;
-  categorySlug: string;
-  location: string;
-  image: string;
-  companyName: string;
-  companyId: string;
-  rating: number;
-  reviewCount: number;
-  isFeatured?: boolean;
-  createdAt: string;
-}
+import type { ServiceWithRelations } from "@/hooks/useServices";
 
 interface ServiceCardProps {
-  service: Service;
+  service: ServiceWithRelations;
   className?: string;
 }
 
 export function ServiceCard({ service, className }: ServiceCardProps) {
-  const formatPrice = (price: number, type: string) => {
+  const formatPrice = (price: number | null, type: string | null) => {
+    if (!price) return "Contact for price";
+    
     const formatted = new Intl.NumberFormat("en-ET", {
       style: "currency",
       currency: "ETB",
@@ -49,7 +34,7 @@ export function ServiceCard({ service, className }: ServiceCardProps) {
       className={cn("group relative block overflow-hidden rounded-xl bg-card card-hover", className)}
     >
       {/* Featured Badge */}
-      {service.isFeatured && (
+      {service.is_featured && (
         <div className="featured-badge">
           <Star className="h-3 w-3 fill-current" />
           Featured
@@ -59,7 +44,7 @@ export function ServiceCard({ service, className }: ServiceCardProps) {
       {/* Image */}
       <div className="aspect-[4/3] overflow-hidden bg-secondary">
         <img
-          src={service.image}
+          src={service.image || "/placeholder.svg"}
           alt={service.title}
           className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
         />
@@ -68,9 +53,11 @@ export function ServiceCard({ service, className }: ServiceCardProps) {
       {/* Content */}
       <div className="p-4">
         {/* Category */}
-        <span className="category-badge bg-primary/10 text-primary">
-          {service.category}
-        </span>
+        {service.categories && (
+          <span className="category-badge bg-primary/10 text-primary">
+            {service.categories.name}
+          </span>
+        )}
 
         {/* Title */}
         <h3 className="mt-2 line-clamp-2 font-semibold text-foreground group-hover:text-primary transition-colors">
@@ -78,20 +65,18 @@ export function ServiceCard({ service, className }: ServiceCardProps) {
         </h3>
 
         {/* Company */}
-        <p className="mt-1 text-sm text-muted-foreground">
-          by {service.companyName}
-        </p>
+        {service.companies && (
+          <p className="mt-1 text-sm text-muted-foreground">
+            by {service.companies.name}
+          </p>
+        )}
 
-        {/* Location & Rating */}
+        {/* Location */}
         <div className="mt-3 flex items-center gap-3 text-sm text-muted-foreground">
-          <span className="flex items-center gap-1">
-            <MapPin className="h-3.5 w-3.5" />
-            {service.location}
-          </span>
-          {service.reviewCount > 0 && (
+          {service.location && (
             <span className="flex items-center gap-1">
-              <Star className="h-3.5 w-3.5 fill-warning text-warning" />
-              {service.rating.toFixed(1)} ({service.reviewCount})
+              <MapPin className="h-3.5 w-3.5" />
+              {service.location}
             </span>
           )}
         </div>
@@ -99,11 +84,11 @@ export function ServiceCard({ service, className }: ServiceCardProps) {
         {/* Price */}
         <div className="mt-3 flex items-center justify-between">
           <span className="price-tag text-lg">
-            {formatPrice(service.price, service.priceType)}
+            {formatPrice(service.price, service.price_type)}
           </span>
           <span className="flex items-center gap-1 text-xs text-muted-foreground">
             <Clock className="h-3 w-3" />
-            {new Date(service.createdAt).toLocaleDateString()}
+            {new Date(service.created_at).toLocaleDateString()}
           </span>
         </div>
       </div>

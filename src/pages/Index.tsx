@@ -3,9 +3,11 @@ import { SearchBar } from "@/components/search/SearchBar";
 import { ServiceCard } from "@/components/service/ServiceCard";
 import { CategoryCard } from "@/components/category/CategoryCard";
 import { Button } from "@/components/ui/button";
-import { mockServices, mockCategories } from "@/data/mockData";
+import { Skeleton } from "@/components/ui/skeleton";
+import { useServices } from "@/hooks/useServices";
+import { useCategories } from "@/hooks/useCategories";
 import { ArrowRight, Shield, Clock, Users, Star } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const stats = [
   { icon: Users, label: "Active Providers", value: "2,500+" },
@@ -15,8 +17,22 @@ const stats = [
 ];
 
 const Index = () => {
-  const featuredServices = mockServices.filter((s) => s.isFeatured);
-  const recentServices = mockServices.slice(0, 6);
+  const navigate = useNavigate();
+  const { data: categories, isLoading: categoriesLoading } = useCategories();
+  const { data: featuredServices, isLoading: featuredLoading } = useServices({ 
+    featured: true, 
+    limit: 6 
+  });
+  const { data: recentServices, isLoading: recentLoading } = useServices({ 
+    limit: 6 
+  });
+
+  const handleSearch = (query: string, location: string) => {
+    const params = new URLSearchParams();
+    if (query) params.set("q", query);
+    if (location) params.set("location", location);
+    navigate(`/services?${params.toString()}`);
+  };
 
   return (
     <Layout>
@@ -35,9 +51,7 @@ const Index = () => {
             <div className="mt-8 animate-slide-up" style={{ animationDelay: "0.1s" }}>
               <SearchBar 
                 className="mx-auto max-w-2xl"
-                onSearch={(query, location) => {
-                  console.log("Search:", query, location);
-                }}
+                onSearch={handleSearch}
               />
             </div>
           </div>
@@ -80,15 +94,21 @@ const Index = () => {
             </Link>
           </div>
           <div className="mt-8 grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4">
-            {mockCategories.slice(0, 8).map((category) => (
-              <CategoryCard key={category.id} category={category} variant="compact" />
-            ))}
+            {categoriesLoading ? (
+              Array.from({ length: 8 }).map((_, i) => (
+                <Skeleton key={i} className="h-24 rounded-xl" />
+              ))
+            ) : (
+              categories?.slice(0, 8).map((category) => (
+                <CategoryCard key={category.id} category={category} variant="compact" />
+              ))
+            )}
           </div>
         </div>
       </section>
 
       {/* Featured Services */}
-      {featuredServices.length > 0 && (
+      {(featuredLoading || (featuredServices && featuredServices.length > 0)) && (
         <section className="bg-secondary/50 py-12 md:py-16">
           <div className="container-padded">
             <div className="flex items-center justify-between">
@@ -106,9 +126,15 @@ const Index = () => {
               </Link>
             </div>
             <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              {featuredServices.map((service) => (
-                <ServiceCard key={service.id} service={service} />
-              ))}
+              {featuredLoading ? (
+                Array.from({ length: 3 }).map((_, i) => (
+                  <Skeleton key={i} className="h-80 rounded-xl" />
+                ))
+              ) : (
+                featuredServices?.map((service) => (
+                  <ServiceCard key={service.id} service={service} />
+                ))
+              )}
             </div>
           </div>
         </section>
@@ -132,9 +158,22 @@ const Index = () => {
             </Link>
           </div>
           <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {recentServices.map((service) => (
-              <ServiceCard key={service.id} service={service} />
-            ))}
+            {recentLoading ? (
+              Array.from({ length: 6 }).map((_, i) => (
+                <Skeleton key={i} className="h-80 rounded-xl" />
+              ))
+            ) : recentServices && recentServices.length > 0 ? (
+              recentServices.map((service) => (
+                <ServiceCard key={service.id} service={service} />
+              ))
+            ) : (
+              <div className="col-span-full rounded-xl bg-secondary/50 py-12 text-center">
+                <p className="text-muted-foreground">No services available yet.</p>
+                <Link to="/register">
+                  <Button className="mt-4">Be the first to post</Button>
+                </Link>
+              </div>
+            )}
           </div>
         </div>
       </section>
@@ -144,7 +183,7 @@ const Index = () => {
         <div className="container-padded text-center">
           <h2 className="text-white">Ready to Offer Your Services?</h2>
           <p className="mx-auto mt-4 max-w-2xl text-lg text-white/80">
-            Join thousands of businesses and freelancers who are growing their customer base with Servizi.
+            Join thousands of businesses and freelancers who are growing their customer base with ServiceLink.
           </p>
           <div className="mt-8 flex flex-col items-center justify-center gap-4 sm:flex-row">
             <Link to="/register">
@@ -152,9 +191,9 @@ const Index = () => {
                 Get Started Free
               </Button>
             </Link>
-            <Link to="/about">
+            <Link to="/services">
               <Button size="lg" variant="outline" className="min-w-[200px] border-white/30 text-white hover:bg-white/10">
-                Learn More
+                Browse Services
               </Button>
             </Link>
           </div>
