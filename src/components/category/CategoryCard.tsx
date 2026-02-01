@@ -1,45 +1,9 @@
 import { Link } from "react-router-dom";
-import { 
-  Monitor, 
-  Home, 
-  Palette, 
-  Megaphone, 
-  GraduationCap, 
-  Briefcase,
-  Truck,
-  Camera,
-  LucideIcon
-} from "lucide-react";
+import * as Icons from "lucide-react";
 import { cn } from "@/lib/utils";
+import type { Database } from "@/integrations/supabase/types";
 
-export interface Category {
-  id: string;
-  name: string;
-  slug: string;
-  icon: string;
-  serviceCount: number;
-  color: string;
-}
-
-const iconMap: Record<string, LucideIcon> = {
-  monitor: Monitor,
-  home: Home,
-  palette: Palette,
-  megaphone: Megaphone,
-  graduation: GraduationCap,
-  briefcase: Briefcase,
-  truck: Truck,
-  camera: Camera,
-};
-
-const colorMap: Record<string, string> = {
-  it: "bg-category-it/10 text-category-it group-hover:bg-category-it",
-  home: "bg-category-home/10 text-category-home group-hover:bg-category-home",
-  creative: "bg-category-creative/10 text-category-creative group-hover:bg-category-creative",
-  marketing: "bg-category-marketing/10 text-category-marketing group-hover:bg-category-marketing",
-  education: "bg-category-education/10 text-category-education group-hover:bg-category-education",
-  business: "bg-category-business/10 text-category-business group-hover:bg-category-business",
-};
+type Category = Database["public"]["Tables"]["categories"]["Row"];
 
 interface CategoryCardProps {
   category: Category;
@@ -47,28 +11,34 @@ interface CategoryCardProps {
   className?: string;
 }
 
+// Map icon names to Lucide icons
+const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
+  Home: Icons.Home,
+  Code: Icons.Code,
+  Palette: Icons.Palette,
+  GraduationCap: Icons.GraduationCap,
+  Briefcase: Icons.Briefcase,
+  Heart: Icons.Heart,
+  PartyPopper: Icons.PartyPopper,
+  Truck: Icons.Truck,
+};
+
 export function CategoryCard({ category, variant = "default", className }: CategoryCardProps) {
-  const Icon = iconMap[category.icon] || Briefcase;
-  const colorClasses = colorMap[category.color] || colorMap.business;
+  const IconComponent = category.icon ? iconMap[category.icon] || Icons.Folder : Icons.Folder;
 
   if (variant === "compact") {
     return (
       <Link
         to={`/categories/${category.slug}`}
         className={cn(
-          "group flex flex-col items-center gap-2 rounded-xl p-4 transition-all hover:bg-secondary",
+          "flex flex-col items-center gap-2 rounded-xl bg-card p-4 text-center transition-all hover:bg-primary hover:text-primary-foreground shadow-sm",
           className
         )}
       >
-        <div className={cn(
-          "flex h-12 w-12 items-center justify-center rounded-xl transition-colors group-hover:text-white",
-          colorClasses
-        )}>
-          <Icon className="h-6 w-6" />
+        <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
+          <IconComponent className="h-6 w-6 text-primary" />
         </div>
-        <span className="text-center text-sm font-medium text-foreground">
-          {category.name}
-        </span>
+        <span className="text-sm font-medium">{category.name}</span>
       </Link>
     );
   }
@@ -77,22 +47,22 @@ export function CategoryCard({ category, variant = "default", className }: Categ
     <Link
       to={`/categories/${category.slug}`}
       className={cn(
-        "group flex items-center gap-4 rounded-xl bg-card p-4 card-hover",
+        "group flex items-center gap-4 rounded-xl bg-card p-4 shadow-sm transition-all hover:shadow-md",
         className
       )}
     >
-      <div className={cn(
-        "flex h-14 w-14 shrink-0 items-center justify-center rounded-xl transition-colors group-hover:text-white",
-        colorClasses
-      )}>
-        <Icon className="h-7 w-7" />
+      <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-primary/10 transition-colors group-hover:bg-primary">
+        <IconComponent className="h-7 w-7 text-primary transition-colors group-hover:text-primary-foreground" />
       </div>
-      <div className="flex-1 min-w-0">
-        <h3 className="font-semibold text-foreground group-hover:text-primary transition-colors">
-          {category.name}
-        </h3>
-        <p className="text-sm text-muted-foreground">
-          {category.serviceCount.toLocaleString()} services
+      <div className="flex-1">
+        <h3 className="font-semibold text-foreground">{category.name}</h3>
+        {category.description && (
+          <p className="mt-1 text-sm text-muted-foreground line-clamp-1">
+            {category.description}
+          </p>
+        )}
+        <p className="mt-1 text-xs text-muted-foreground">
+          {category.service_count || 0} services
         </p>
       </div>
     </Link>

@@ -1,8 +1,11 @@
 import { Layout } from "@/components/layout/Layout";
 import { CategoryCard } from "@/components/category/CategoryCard";
-import { mockCategories } from "@/data/mockData";
+import { Skeleton } from "@/components/ui/skeleton";
+import { useCategories } from "@/hooks/useCategories";
 
 const Categories = () => {
+  const { data: categories, isLoading } = useCategories();
+
   return (
     <Layout>
       {/* Header */}
@@ -18,11 +21,23 @@ const Categories = () => {
       {/* Categories Grid */}
       <section className="py-8 md:py-12">
         <div className="container-padded">
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {mockCategories.map((category) => (
-              <CategoryCard key={category.id} category={category} />
-            ))}
-          </div>
+          {isLoading ? (
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {Array.from({ length: 8 }).map((_, i) => (
+                <Skeleton key={i} className="h-24 rounded-xl" />
+              ))}
+            </div>
+          ) : categories && categories.length > 0 ? (
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {categories.map((category) => (
+                <CategoryCard key={category.id} category={category} />
+              ))}
+            </div>
+          ) : (
+            <div className="rounded-xl bg-secondary/50 py-12 text-center">
+              <p className="text-muted-foreground">No categories available.</p>
+            </div>
+          )}
         </div>
       </section>
     </Layout>

@@ -8,16 +8,20 @@ interface SearchBarProps {
   placeholder?: string;
   showFilters?: boolean;
   className?: string;
+  defaultQuery?: string;
+  defaultLocation?: string;
 }
 
 export function SearchBar({ 
   onSearch, 
   placeholder = "What service are you looking for?",
   showFilters = true,
-  className 
+  className,
+  defaultQuery = "",
+  defaultLocation = ""
 }: SearchBarProps) {
-  const [query, setQuery] = useState("");
-  const [location, setLocation] = useState("");
+  const [query, setQuery] = useState(defaultQuery);
+  const [location, setLocation] = useState(defaultLocation);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
