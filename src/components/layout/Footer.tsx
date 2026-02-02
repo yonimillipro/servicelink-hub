@@ -38,9 +38,9 @@ export function Footer() {
           <div className="space-y-4">
             <Link to="/" className="flex items-center gap-2">
               <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary">
-                <span className="text-lg font-bold text-primary-foreground">S</span>
+                <span className="text-lg font-bold text-primary-foreground">SL</span>
               </div>
-              <span className="text-xl font-bold text-foreground">Servizi</span>
+              <span className="text-xl font-bold text-foreground">ServiceLink</span>
             </Link>
             <p className="text-sm text-muted-foreground">
               Connect with trusted service providers in your area. Find the right professional for any job.
@@ -99,7 +99,7 @@ export function Footer() {
             <ul className="space-y-3">
               <li className="flex items-center gap-2 text-sm text-muted-foreground">
                 <Mail className="h-4 w-4 text-primary" />
-                support@servizi.com
+                support@servicelink.com
               </li>
               <li className="flex items-center gap-2 text-sm text-muted-foreground">
                 <Phone className="h-4 w-4 text-primary" />
@@ -116,7 +116,7 @@ export function Footer() {
         {/* Bottom Bar */}
         <div className="mt-10 flex flex-col items-center justify-between gap-4 border-t pt-6 md:flex-row">
           <p className="text-sm text-muted-foreground">
-            © {new Date().getFullYear()} Servizi. All rights reserved.
+            © {new Date().getFullYear()} ServiceLink. All rights reserved.
           </p>
           <div className="flex gap-6">
             {footerLinks.legal.map((link) => (

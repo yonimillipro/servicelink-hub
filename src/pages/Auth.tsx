@@ -134,7 +134,7 @@ export default function Auth() {
         <Card className="shadow-lg">
           <CardHeader className="text-center">
             <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-primary">
-              <span className="text-xl font-bold text-primary-foreground">S</span>
+              <span className="text-lg font-bold text-primary-foreground">SL</span>
             </div>
             <CardTitle className="text-2xl">
               {mode === "login" && "Welcome Back"}

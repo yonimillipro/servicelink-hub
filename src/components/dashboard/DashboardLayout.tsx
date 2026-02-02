@@ -41,9 +41,9 @@ export function DashboardLayout({ children, title, description }: DashboardLayou
             <div className="h-6 w-px bg-border" />
             <Link to="/dashboard" className="flex items-center gap-2">
               <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary">
-                <span className="text-sm font-bold text-primary-foreground">S</span>
+                <span className="text-xs font-bold text-primary-foreground">SL</span>
               </div>
-              <span className="font-semibold text-foreground">Provider Dashboard</span>
+              <span className="font-semibold text-foreground">ServiceLink Dashboard</span>
             </Link>
           </div>
           <div className="flex items-center gap-4">

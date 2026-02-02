@@ -41,9 +41,9 @@ export function AdminLayout({ children, title, description }: AdminLayoutProps) 
             <div className="h-6 w-px bg-border" />
             <Link to="/admin" className="flex items-center gap-2">
               <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-destructive">
-                <Shield className="h-4 w-4 text-destructive-foreground" />
+                <span className="text-xs font-bold text-destructive-foreground">SL</span>
               </div>
-              <span className="font-semibold text-foreground">Admin Panel</span>
+              <span className="font-semibold text-foreground">ServiceLink Admin</span>
             </Link>
           </div>
           <div className="flex items-center gap-4">

@@ -1,17 +1,19 @@
 import { Link, useLocation } from "react-router-dom";
 import { Home, Grid3X3, Search, User, Plus } from "lucide-react";
 import { cn } from "@/lib/utils";
-
-const navItems = [
-  { icon: Home, label: "Home", href: "/" },
-  { icon: Grid3X3, label: "Categories", href: "/categories" },
-  { icon: Plus, label: "Post", href: "/dashboard/services/add", isMain: true },
-  { icon: Search, label: "Search", href: "/services" },
-  { icon: User, label: "Account", href: "/login" },
-];
+import { useAuth } from "@/hooks/useAuth";
 
 export function BottomNav() {
   const location = useLocation();
+  const { user } = useAuth();
+
+  const navItems = [
+    { icon: Home, label: "Home", href: "/" },
+    { icon: Grid3X3, label: "Categories", href: "/categories" },
+    { icon: Plus, label: "Post", href: user ? "/dashboard/services/add" : "/login", isMain: true },
+    { icon: Search, label: "Search", href: "/services" },
+    { icon: User, label: "Account", href: user ? "/dashboard" : "/login" },
+  ];
 
   return (
     <nav className="bottom-nav md:hidden">
