@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/hooks/useAuth";
+import { ThemeToggle } from "@/components/theme/ThemeToggle";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -16,6 +17,7 @@ const navLinks = [
   { label: "Home", href: "/" },
   { label: "Services", href: "/services" },
   { label: "Categories", href: "/categories" },
+  { label: "About", href: "/about" },
 ];
 
 export function Header() {
@@ -54,13 +56,15 @@ export function Header() {
           </nav>
 
           {/* Desktop Actions */}
-          <div className="hidden items-center gap-3 md:flex">
-            <Link to="/services">
+          <div className="hidden items-center gap-2 md:flex">
+            <Link to="/search">
               <Button variant="ghost" size="icon" className="text-muted-foreground">
                 <Search className="h-5 w-5" />
               </Button>
             </Link>
-            
+
+            <ThemeToggle />
+
             {user ? (
               <>
                 <DropdownMenu>
@@ -94,38 +98,37 @@ export function Header() {
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
-                <Link to="/dashboard/services/add">
-                  <Button size="sm" className="gap-2">
-                    <Plus className="h-4 w-4" />
-                    Post Service
-                  </Button>
-                </Link>
+                {isProvider && (
+                  <Link to="/dashboard/services/add">
+                    <Button size="sm" className="gap-2">
+                      <Plus className="h-4 w-4" />
+                      Post Service
+                    </Button>
+                  </Link>
+                )}
               </>
             ) : (
               <>
                 <Link to="/login">
-                  <Button variant="ghost" size="sm" className="gap-2">
-                    <User className="h-4 w-4" />
-                    Sign In
-                  </Button>
+                  <Button variant="ghost" size="sm">Sign In</Button>
                 </Link>
                 <Link to="/register">
-                  <Button size="sm" className="gap-2">
-                    <Plus className="h-4 w-4" />
-                    Get Started
-                  </Button>
+                  <Button size="sm">Get Started</Button>
                 </Link>
               </>
             )}
           </div>
 
-          {/* Mobile Menu Button */}
-          <button
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
-            className="flex h-10 w-10 items-center justify-center rounded-lg text-muted-foreground hover:bg-secondary md:hidden"
-          >
-            {isMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-          </button>
+          {/* Mobile: theme toggle + menu */}
+          <div className="flex items-center gap-1 md:hidden">
+            <ThemeToggle />
+            <button
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
+              className="flex h-10 w-10 items-center justify-center rounded-lg text-muted-foreground hover:bg-secondary"
+            >
+              {isMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+            </button>
+          </div>
         </div>
       </div>
 
@@ -150,24 +153,18 @@ export function Header() {
                 </Link>
               ))}
               <hr className="my-2 border-border" />
-              
+
               {user ? (
                 <>
                   {isProvider && (
-                    <Link
-                      to="/dashboard"
-                      onClick={() => setIsMenuOpen(false)}
-                      className="rounded-lg px-4 py-2.5 text-sm font-medium text-foreground hover:bg-secondary"
-                    >
+                    <Link to="/dashboard" onClick={() => setIsMenuOpen(false)}
+                      className="rounded-lg px-4 py-2.5 text-sm font-medium text-foreground hover:bg-secondary">
                       Dashboard
                     </Link>
                   )}
                   {isAdmin && (
-                    <Link
-                      to="/admin"
-                      onClick={() => setIsMenuOpen(false)}
-                      className="rounded-lg px-4 py-2.5 text-sm font-medium text-foreground hover:bg-secondary"
-                    >
+                    <Link to="/admin" onClick={() => setIsMenuOpen(false)}
+                      className="rounded-lg px-4 py-2.5 text-sm font-medium text-foreground hover:bg-secondary">
                       Admin Panel
                     </Link>
                   )}
@@ -177,27 +174,20 @@ export function Header() {
                   >
                     Sign Out
                   </button>
-                  <Link to="/dashboard/services/add" onClick={() => setIsMenuOpen(false)}>
-                    <Button className="w-full gap-2">
-                      <Plus className="h-4 w-4" />
-                      Post Service
-                    </Button>
-                  </Link>
+                  {isProvider && (
+                    <Link to="/dashboard/services/add" onClick={() => setIsMenuOpen(false)}>
+                      <Button className="w-full gap-2"><Plus className="h-4 w-4" />Post Service</Button>
+                    </Link>
+                  )}
                 </>
               ) : (
                 <>
-                  <Link
-                    to="/login"
-                    onClick={() => setIsMenuOpen(false)}
-                    className="rounded-lg px-4 py-2.5 text-sm font-medium text-foreground hover:bg-secondary"
-                  >
+                  <Link to="/login" onClick={() => setIsMenuOpen(false)}
+                    className="rounded-lg px-4 py-2.5 text-sm font-medium text-foreground hover:bg-secondary">
                     Sign In
                   </Link>
                   <Link to="/register" onClick={() => setIsMenuOpen(false)}>
-                    <Button className="w-full gap-2">
-                      <Plus className="h-4 w-4" />
-                      Get Started
-                    </Button>
+                    <Button className="w-full">Get Started</Button>
                   </Link>
                 </>
               )}
