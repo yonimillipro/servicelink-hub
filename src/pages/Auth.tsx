@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Loader2, Mail, Lock, User, AlertCircle, ArrowLeft } from "lucide-react";
 import { z } from "zod";
 
@@ -17,6 +18,7 @@ const loginSchema = z.object({
 const registerSchema = loginSchema.extend({
   fullName: z.string().min(2, "Name must be at least 2 characters"),
   confirmPassword: z.string(),
+  role: z.enum(["user", "provider"]),
 }).refine((data) => data.password === data.confirmPassword, {
   message: "Passwords don't match",
   path: ["confirmPassword"],
@@ -28,22 +30,22 @@ export default function Auth() {
   const navigate = useNavigate();
   const location = useLocation();
   const { user, signIn, signUp, isLoading: authLoading } = useAuth();
-  
+
   const [mode, setMode] = useState<AuthMode>(() => {
     if (location.pathname === "/register") return "register";
     if (location.pathname === "/forgot-password") return "forgot-password";
     return "login";
   });
-  
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [fullName, setFullName] = useState("");
+  const [role, setRole] = useState<"user" | "provider">("user");
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Redirect if already logged in
   useEffect(() => {
     if (user && !authLoading) {
       const from = (location.state as { from?: Location })?.from?.pathname || "/";
@@ -51,7 +53,6 @@ export default function Auth() {
     }
   }, [user, authLoading, navigate, location.state]);
 
-  // Update mode based on route
   useEffect(() => {
     if (location.pathname === "/register") setMode("register");
     else if (location.pathname === "/forgot-password") setMode("forgot-password");
@@ -84,11 +85,8 @@ export default function Auth() {
           }
         }
       } else if (mode === "register") {
-        const validation = registerSchema.safeParse({ 
-          email, 
-          password, 
-          fullName, 
-          confirmPassword 
+        const validation = registerSchema.safeParse({
+          email, password, fullName, confirmPassword, role,
         });
         if (!validation.success) {
           setError(validation.error.errors[0].message);
@@ -96,7 +94,7 @@ export default function Auth() {
           return;
         }
 
-        const { error } = await signUp(email, password, fullName);
+        const { error } = await signUp(email, password, fullName, role);
         if (error) {
           if (error.message.includes("already registered")) {
             setError("An account with this email already exists. Please sign in instead.");
@@ -123,14 +121,14 @@ export default function Auth() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-secondary/30 px-4 py-12">
       <div className="w-full max-w-md">
-        <Link 
-          to="/" 
+        <Link
+          to="/"
           className="mb-6 inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-primary"
         >
           <ArrowLeft className="h-4 w-4" />
           Back to Home
         </Link>
-        
+
         <Card className="shadow-lg">
           <CardHeader className="text-center">
             <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-primary">
@@ -147,7 +145,7 @@ export default function Auth() {
               {mode === "forgot-password" && "Enter your email to reset your password"}
             </CardDescription>
           </CardHeader>
-          
+
           <form onSubmit={handleSubmit}>
             <CardContent className="space-y-4">
               {error && (
@@ -156,29 +154,59 @@ export default function Auth() {
                   <AlertDescription>{error}</AlertDescription>
                 </Alert>
               )}
-              
+
               {success && (
-                <Alert className="border-green-200 bg-green-50 text-green-800">
+                <Alert className="border-success/30 bg-success/10 text-success">
                   <AlertDescription>{success}</AlertDescription>
                 </Alert>
               )}
 
               {mode === "register" && (
-                <div className="space-y-2">
-                  <Label htmlFor="fullName">Full Name</Label>
-                  <div className="relative">
-                    <User className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-                    <Input
-                      id="fullName"
-                      type="text"
-                      placeholder="John Doe"
-                      value={fullName}
-                      onChange={(e) => setFullName(e.target.value)}
-                      className="pl-10"
-                      required
-                    />
+                <>
+                  <div className="space-y-2">
+                    <Label htmlFor="fullName">Full Name</Label>
+                    <div className="relative">
+                      <User className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                      <Input
+                        id="fullName"
+                        type="text"
+                        placeholder="John Doe"
+                        value={fullName}
+                        onChange={(e) => setFullName(e.target.value)}
+                        className="pl-10"
+                        required
+                      />
+                    </div>
                   </div>
-                </div>
+
+                  <div className="space-y-3">
+                    <Label>I want to</Label>
+                    <RadioGroup value={role} onValueChange={(v) => setRole(v as "user" | "provider")} className="grid grid-cols-2 gap-3">
+                      <Label
+                        htmlFor="role-user"
+                        className={`flex cursor-pointer flex-col items-center gap-2 rounded-lg border-2 p-4 text-center transition-colors ${
+                          role === "user" ? "border-primary bg-primary/5" : "border-border hover:border-primary/50"
+                        }`}
+                      >
+                        <RadioGroupItem value="user" id="role-user" className="sr-only" />
+                        <span className="text-2xl">🔍</span>
+                        <span className="text-sm font-medium">Find Services</span>
+                        <span className="text-xs text-muted-foreground">Browse & contact providers</span>
+                      </Label>
+                      <Label
+                        htmlFor="role-provider"
+                        className={`flex cursor-pointer flex-col items-center gap-2 rounded-lg border-2 p-4 text-center transition-colors ${
+                          role === "provider" ? "border-primary bg-primary/5" : "border-border hover:border-primary/50"
+                        }`}
+                      >
+                        <RadioGroupItem value="provider" id="role-provider" className="sr-only" />
+                        <span className="text-2xl">💼</span>
+                        <span className="text-sm font-medium">Offer Services</span>
+                        <span className="text-xs text-muted-foreground">List & manage services</span>
+                      </Label>
+                    </RadioGroup>
+                  </div>
+                </>
               )}
 
               <div className="space-y-2">
@@ -235,10 +263,7 @@ export default function Auth() {
 
               {mode === "login" && (
                 <div className="text-right">
-                  <Link 
-                    to="/forgot-password" 
-                    className="text-sm text-primary hover:underline"
-                  >
+                  <Link to="/forgot-password" className="text-sm text-primary hover:underline">
                     Forgot password?
                   </Link>
                 </div>
@@ -246,11 +271,7 @@ export default function Auth() {
             </CardContent>
 
             <CardFooter className="flex flex-col gap-4">
-              <Button 
-                type="submit" 
-                className="w-full" 
-                disabled={isSubmitting}
-              >
+              <Button type="submit" className="w-full" disabled={isSubmitting}>
                 {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                 {mode === "login" && "Sign In"}
                 {mode === "register" && "Create Account"}
@@ -261,21 +282,15 @@ export default function Auth() {
                 {mode === "login" ? (
                   <>
                     Don't have an account?{" "}
-                    <Link to="/register" className="text-primary hover:underline">
-                      Sign up
-                    </Link>
+                    <Link to="/register" className="text-primary hover:underline">Sign up</Link>
                   </>
                 ) : mode === "register" ? (
                   <>
                     Already have an account?{" "}
-                    <Link to="/login" className="text-primary hover:underline">
-                      Sign in
-                    </Link>
+                    <Link to="/login" className="text-primary hover:underline">Sign in</Link>
                   </>
                 ) : (
-                  <Link to="/login" className="text-primary hover:underline">
-                    Back to sign in
-                  </Link>
+                  <Link to="/login" className="text-primary hover:underline">Back to sign in</Link>
                 )}
               </div>
             </CardFooter>
