@@ -10,6 +10,7 @@ import {
   Shield
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { ThemeToggle } from "@/components/theme/ThemeToggle";
 
 interface AdminLayoutProps {
   children: React.ReactNode;
@@ -46,10 +47,11 @@ export function AdminLayout({ children, title, description }: AdminLayoutProps) 
               <span className="font-semibold text-foreground">ServiceLink Admin</span>
             </Link>
           </div>
-          <div className="flex items-center gap-4">
-            <span className="text-sm text-muted-foreground">
+          <div className="flex items-center gap-2">
+            <span className="hidden text-sm text-muted-foreground sm:inline">
               {profile?.full_name || profile?.email}
             </span>
+            <ThemeToggle />
             <Button variant="ghost" size="sm" onClick={signOut}>
               Sign Out
             </Button>

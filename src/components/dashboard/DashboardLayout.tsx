@@ -10,6 +10,7 @@ import {
   Plus
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { ThemeToggle } from "@/components/theme/ThemeToggle";
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
@@ -46,10 +47,11 @@ export function DashboardLayout({ children, title, description }: DashboardLayou
               <span className="font-semibold text-foreground">ServiceLink Dashboard</span>
             </Link>
           </div>
-          <div className="flex items-center gap-4">
-            <span className="text-sm text-muted-foreground">
+          <div className="flex items-center gap-2">
+            <span className="hidden text-sm text-muted-foreground sm:inline">
               {profile?.full_name || profile?.email}
             </span>
+            <ThemeToggle />
             <Button variant="ghost" size="sm" onClick={signOut}>
               Sign Out
             </Button>
