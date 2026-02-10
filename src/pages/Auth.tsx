@@ -7,8 +7,9 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Loader2, Mail, Lock, User, AlertCircle, ArrowLeft } from "lucide-react";
+import { Loader2, Mail, Lock, User, AlertCircle, ArrowLeft, Eye, EyeOff } from "lucide-react";
 import { z } from "zod";
+import { supabase } from "@/integrations/supabase/client";
 
 const loginSchema = z.object({
   email: z.string().email("Please enter a valid email address"),
@@ -45,6 +46,8 @@ export default function Auth() {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   useEffect(() => {
     if (user && !authLoading) {
@@ -66,7 +69,24 @@ export default function Auth() {
     setIsSubmitting(true);
 
     try {
-      if (mode === "login") {
+      if (mode === "forgot-password") {
+        const emailValidation = z.string().email("Please enter a valid email address").safeParse(email);
+        if (!emailValidation.success) {
+          setError(emailValidation.error.errors[0].message);
+          setIsSubmitting(false);
+          return;
+        }
+
+        const { error } = await supabase.auth.resetPasswordForEmail(email, {
+          redirectTo: `${window.location.origin}/login`,
+        });
+
+        if (error) {
+          setError(error.message);
+        } else {
+          setSuccess("If an account exists with that email, a password reset link has been sent.");
+        }
+      } else if (mode === "login") {
         const validation = loginSchema.safeParse({ email, password });
         if (!validation.success) {
           setError(validation.error.errors[0].message);
@@ -117,6 +137,17 @@ export default function Auth() {
       </div>
     );
   }
+
+  const PasswordToggle = ({ show, onToggle }: { show: boolean; onToggle: () => void }) => (
+    <button
+      type="button"
+      onClick={onToggle}
+      className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+      aria-label={show ? "Hide password" : "Show password"}
+    >
+      {show ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+    </button>
+  );
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-secondary/30 px-4 py-12">
@@ -232,13 +263,14 @@ export default function Auth() {
                     <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                     <Input
                       id="password"
-                      type="password"
+                      type={showPassword ? "text" : "password"}
                       placeholder="••••••••"
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
-                      className="pl-10"
+                      className="pl-10 pr-10"
                       required
                     />
+                    <PasswordToggle show={showPassword} onToggle={() => setShowPassword(!showPassword)} />
                   </div>
                 </div>
               )}
@@ -250,13 +282,14 @@ export default function Auth() {
                     <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                     <Input
                       id="confirmPassword"
-                      type="password"
+                      type={showConfirmPassword ? "text" : "password"}
                       placeholder="••••••••"
                       value={confirmPassword}
                       onChange={(e) => setConfirmPassword(e.target.value)}
-                      className="pl-10"
+                      className="pl-10 pr-10"
                       required
                     />
+                    <PasswordToggle show={showConfirmPassword} onToggle={() => setShowConfirmPassword(!showConfirmPassword)} />
                   </div>
                 </div>
               )}
