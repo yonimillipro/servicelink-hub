@@ -6,8 +6,10 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useServices } from "@/hooks/useServices";
 import { useCategories } from "@/hooks/useCategories";
+import { useAuth } from "@/hooks/useAuth";
 import { ArrowRight, Shield, Clock, Users, Star } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
+import { useToast } from "@/hooks/use-toast";
 
 const stats = [
   { icon: Users, label: "Active Providers", value: "2,500+" },
@@ -18,6 +20,8 @@ const stats = [
 
 const Index = () => {
   const navigate = useNavigate();
+  const { toast } = useToast();
+  const { user, isAdmin, isProvider, roles } = useAuth();
   const { data: categories, isLoading: categoriesLoading } = useCategories();
   const { data: featuredServices, isLoading: featuredLoading } = useServices({ 
     featured: true, 
@@ -32,6 +36,26 @@ const Index = () => {
     if (query) params.set("q", query);
     if (location) params.set("location", location);
     navigate(`/services?${params.toString()}`);
+  };
+
+  const handleBeFirstToPost = () => {
+    if (!user) {
+      navigate("/register");
+      return;
+    }
+    if (isAdmin) {
+      navigate("/admin/services");
+      return;
+    }
+    if (isProvider) {
+      navigate("/dashboard/services/add");
+      return;
+    }
+    // User role - show message
+    toast({
+      title: "Provider Account Required",
+      description: "Switch to a provider account to post services.",
+    });
   };
 
   return (
@@ -56,7 +80,6 @@ const Index = () => {
             </div>
           </div>
         </div>
-        {/* Decorative elements */}
         <div className="absolute -right-20 -top-20 h-64 w-64 rounded-full bg-white/5" />
         <div className="absolute -bottom-32 -left-32 h-96 w-96 rounded-full bg-white/5" />
       </section>
@@ -82,9 +105,7 @@ const Index = () => {
           <div className="flex items-center justify-between">
             <div>
               <h2 className="text-foreground">Browse Categories</h2>
-              <p className="mt-1 text-muted-foreground">
-                Find services by category
-              </p>
+              <p className="mt-1 text-muted-foreground">Find services by category</p>
             </div>
             <Link to="/categories">
               <Button variant="ghost" className="gap-2">
@@ -114,9 +135,7 @@ const Index = () => {
             <div className="flex items-center justify-between">
               <div>
                 <h2 className="text-foreground">Featured Services</h2>
-                <p className="mt-1 text-muted-foreground">
-                  Hand-picked services from top providers
-                </p>
+                <p className="mt-1 text-muted-foreground">Hand-picked services from top providers</p>
               </div>
               <Link to="/services?featured=true">
                 <Button variant="ghost" className="gap-2">
@@ -146,9 +165,7 @@ const Index = () => {
           <div className="flex items-center justify-between">
             <div>
               <h2 className="text-foreground">Recent Listings</h2>
-              <p className="mt-1 text-muted-foreground">
-                Latest services added to the platform
-              </p>
+              <p className="mt-1 text-muted-foreground">Latest services added to the platform</p>
             </div>
             <Link to="/services">
               <Button variant="ghost" className="gap-2">
@@ -169,9 +186,7 @@ const Index = () => {
             ) : (
               <div className="col-span-full rounded-xl bg-secondary/50 py-12 text-center">
                 <p className="text-muted-foreground">No services available yet.</p>
-                <Link to="/register">
-                  <Button className="mt-4">Be the first to post</Button>
-                </Link>
+                <Button className="mt-4" onClick={handleBeFirstToPost}>Be the first to post</Button>
               </div>
             )}
           </div>
@@ -192,7 +207,7 @@ const Index = () => {
               </Button>
             </Link>
             <Link to="/services">
-              <Button size="lg" variant="outline" className="min-w-[200px] border-white/30 text-white hover:bg-white/10">
+              <Button size="lg" variant="outline" className="min-w-[200px] border-white/30 text-foreground dark:text-white hover:bg-white/10">
                 Browse Services
               </Button>
             </Link>
