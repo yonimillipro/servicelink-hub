@@ -21,6 +21,14 @@ const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
   Heart: Icons.Heart,
   PartyPopper: Icons.PartyPopper,
   Truck: Icons.Truck,
+  Car: Icons.Car,
+  Banknote: Icons.Banknote,
+  UtensilsCrossed: Icons.UtensilsCrossed,
+  Dumbbell: Icons.Dumbbell,
+  Scale: Icons.Scale,
+  Megaphone: Icons.Megaphone,
+  Camera: Icons.Camera,
+  Plane: Icons.Plane,
 };
 
 export function CategoryCard({ category, variant = "default", className }: CategoryCardProps) {
