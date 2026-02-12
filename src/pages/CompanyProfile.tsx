@@ -10,7 +10,8 @@ import { MapPin, Star, Phone, Mail, Calendar, CheckCircle2, ChevronLeft, Share2 
 const CompanyProfile = () => {
   const { id } = useParams();
   const { data: company, isLoading: companyLoading } = useCompanyById(id);
-  const { data: companyServices, isLoading: servicesLoading } = useServices({ companyId: id });
+  const { data: companyResult, isLoading: servicesLoading } = useServices({ companyId: id });
+  const companyServices = companyResult?.data;
 
   if (companyLoading) {
     return (

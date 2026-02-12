@@ -7,8 +7,10 @@ import { useCategories } from "@/hooks/useCategories";
 import { Package, Building2, Folder, Clock } from "lucide-react";
 
 export default function AdminDashboard() {
-  const { data: pendingServices, isLoading: pendingLoading } = useServices({ status: "pending" });
-  const { data: allServices, isLoading: servicesLoading } = useServices({ status: undefined });
+  const { data: pendingResult, isLoading: pendingLoading } = useServices({ status: "pending" });
+  const pendingServices = pendingResult?.data;
+  const { data: allResult, isLoading: servicesLoading } = useServices({ status: undefined });
+  const allServices = allResult?.data;
   const { data: companies, isLoading: companiesLoading } = useAllCompanies();
   const { data: categories, isLoading: categoriesLoading } = useCategories();
 

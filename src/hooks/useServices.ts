@@ -23,21 +23,31 @@ interface UseServicesOptions {
   status?: string;
   limit?: number;
   companyId?: string;
+  page?: number;
+  pageSize?: number;
+}
+
+export interface PaginatedServices {
+  data: ServiceWithRelations[];
+  count: number;
+  page: number;
+  pageSize: number;
+  totalPages: number;
 }
 
 export function useServices(options: UseServicesOptions = {}) {
-  const { categorySlug, featured, status = "approved", limit, companyId } = options;
+  const { categorySlug, featured, status = "approved", limit, companyId, page = 1, pageSize = 12 } = options;
   
   return useQuery({
     queryKey: ["services", options],
-    queryFn: async (): Promise<ServiceWithRelations[]> => {
+    queryFn: async (): Promise<PaginatedServices> => {
       let query = supabase
         .from("services")
         .select(`
           *,
           categories (name, slug),
           companies (id, name, logo_url, location, verified)
-        `)
+        `, { count: "exact" })
         .order("created_at", { ascending: false });
 
       if (status) {
@@ -58,12 +68,23 @@ export function useServices(options: UseServicesOptions = {}) {
 
       if (limit) {
         query = query.limit(limit);
+      } else {
+        const from = (page - 1) * pageSize;
+        const to = from + pageSize - 1;
+        query = query.range(from, to);
       }
 
-      const { data, error } = await query;
+      const { data, error, count } = await query;
       
       if (error) throw error;
-      return (data || []) as ServiceWithRelations[];
+      const total = count ?? 0;
+      return {
+        data: (data || []) as ServiceWithRelations[],
+        count: total,
+        page,
+        pageSize,
+        totalPages: Math.ceil(total / pageSize),
+      };
     },
   });
 }

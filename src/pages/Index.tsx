@@ -23,13 +23,15 @@ const Index = () => {
   const { toast } = useToast();
   const { user, isAdmin, isProvider, roles } = useAuth();
   const { data: categories, isLoading: categoriesLoading } = useCategories();
-  const { data: featuredServices, isLoading: featuredLoading } = useServices({ 
+  const { data: featuredResult, isLoading: featuredLoading } = useServices({ 
     featured: true, 
     limit: 6 
   });
-  const { data: recentServices, isLoading: recentLoading } = useServices({ 
-    limit: 6 
+  const featuredServices = featuredResult?.data;
+  const { data: recentResult, isLoading: recentLoading } = useServices({ 
+    limit: 6
   });
+  const recentServices = recentResult?.data;
 
   const handleSearch = (query: string, location: string) => {
     const params = new URLSearchParams();
