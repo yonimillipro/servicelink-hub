@@ -28,10 +28,11 @@ import { toast } from "sonner";
 
 export default function DashboardServices() {
   const { data: company } = useMyCompany();
-  const { data: services, isLoading, refetch } = useServices({ 
+  const { data: servicesResult, isLoading, refetch } = useServices({ 
     companyId: company?.id,
     status: undefined 
   });
+  const services = servicesResult?.data;
   const deleteService = useDeleteService();
 
   const handleDelete = async (id: string) => {

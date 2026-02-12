@@ -12,12 +12,15 @@ import { Link } from "react-router-dom";
 
 export default function AdminServices() {
   const [activeTab, setActiveTab] = useState("pending");
-  const { data: pendingServices, isLoading: pendingLoading, refetch: refetchPending } = 
+  const { data: pendingResult, isLoading: pendingLoading, refetch: refetchPending } = 
     useServices({ status: "pending" });
-  const { data: approvedServices, isLoading: approvedLoading, refetch: refetchApproved } = 
+  const pendingServices = pendingResult?.data;
+  const { data: approvedResult, isLoading: approvedLoading, refetch: refetchApproved } = 
     useServices({ status: "approved" });
-  const { data: rejectedServices, isLoading: rejectedLoading, refetch: refetchRejected } = 
+  const approvedServices = approvedResult?.data;
+  const { data: rejectedResult, isLoading: rejectedLoading, refetch: refetchRejected } = 
     useServices({ status: "rejected" });
+  const rejectedServices = rejectedResult?.data;
   
   const updateService = useUpdateService();
 

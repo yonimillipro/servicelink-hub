@@ -8,19 +8,29 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useServices } from "@/hooks/useServices";
 import { useCategories, useCategoryBySlug } from "@/hooks/useCategories";
-import { Grid3X3, List, SlidersHorizontal } from "lucide-react";
+import { Grid3X3, List, SlidersHorizontal, ChevronLeft, ChevronRight } from "lucide-react";
+
+const PAGE_SIZE = 12;
 
 const Services = () => {
   const { slug } = useParams();
   const [searchParams, setSearchParams] = useSearchParams();
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   
+  const currentPage = Number(searchParams.get("page") || "1");
+
   const { data: category } = useCategoryBySlug(slug);
   const { data: categories } = useCategories();
-  const { data: services, isLoading } = useServices({
+  const { data: result, isLoading } = useServices({
     categorySlug: slug,
     featured: searchParams.get("featured") === "true",
+    page: currentPage,
+    pageSize: PAGE_SIZE,
   });
+
+  const services = result?.data;
+  const totalPages = result?.totalPages ?? 1;
+  const totalCount = result?.count ?? 0;
 
   const handleSearch = (query: string, location: string) => {
     const params = new URLSearchParams(searchParams);
@@ -28,6 +38,7 @@ const Services = () => {
     else params.delete("q");
     if (location) params.set("location", location);
     else params.delete("location");
+    params.delete("page");
     setSearchParams(params);
   };
 
@@ -37,6 +48,14 @@ const Services = () => {
     } else {
       window.location.href = `/categories/${value}`;
     }
+  };
+
+  const goToPage = (page: number) => {
+    const params = new URLSearchParams(searchParams);
+    if (page <= 1) params.delete("page");
+    else params.set("page", String(page));
+    setSearchParams(params);
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   const filteredServices = services?.filter((service) => {
@@ -54,6 +73,59 @@ const Services = () => {
     
     return true;
   });
+
+  const renderPagination = () => {
+    if (totalPages <= 1) return null;
+
+    const pages: (number | "ellipsis")[] = [];
+    for (let i = 1; i <= totalPages; i++) {
+      if (i === 1 || i === totalPages || (i >= currentPage - 1 && i <= currentPage + 1)) {
+        pages.push(i);
+      } else if (pages[pages.length - 1] !== "ellipsis") {
+        pages.push("ellipsis");
+      }
+    }
+
+    return (
+      <nav aria-label="pagination" className="mt-8 flex items-center justify-center gap-1">
+        <Button
+          variant="outline"
+          size="sm"
+          className="gap-1"
+          disabled={currentPage <= 1}
+          onClick={() => goToPage(currentPage - 1)}
+        >
+          <ChevronLeft className="h-4 w-4" />
+          Previous
+        </Button>
+        {pages.map((p, i) =>
+          p === "ellipsis" ? (
+            <span key={`e-${i}`} className="px-2 text-muted-foreground">…</span>
+          ) : (
+            <Button
+              key={p}
+              variant={p === currentPage ? "default" : "outline"}
+              size="icon"
+              className="h-9 w-9"
+              onClick={() => goToPage(p)}
+            >
+              {p}
+            </Button>
+          )
+        )}
+        <Button
+          variant="outline"
+          size="sm"
+          className="gap-1"
+          disabled={currentPage >= totalPages}
+          onClick={() => goToPage(currentPage + 1)}
+        >
+          Next
+          <ChevronRight className="h-4 w-4" />
+        </Button>
+      </nav>
+    );
+  };
 
   return (
     <Layout>
@@ -147,7 +219,8 @@ const Services = () => {
           ) : filteredServices && filteredServices.length > 0 ? (
             <>
               <p className="mb-4 text-sm text-muted-foreground">
-                {filteredServices.length} service{filteredServices.length !== 1 ? "s" : ""} found
+                {totalCount} service{totalCount !== 1 ? "s" : ""} found
+                {totalPages > 1 && ` • Page ${currentPage} of ${totalPages}`}
               </p>
               <div className={viewMode === "grid" 
                 ? "grid gap-6 sm:grid-cols-2 lg:grid-cols-3" 
@@ -157,6 +230,7 @@ const Services = () => {
                   <ServiceCard key={service.id} service={service} />
                 ))}
               </div>
+              {renderPagination()}
             </>
           ) : (
             <div className="rounded-xl bg-secondary/50 py-12 text-center">

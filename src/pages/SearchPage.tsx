@@ -10,7 +10,8 @@ import { Search } from "lucide-react";
 export default function SearchPage() {
   const [searchParams, setSearchParams] = useSearchParams();
 
-  const { data: services, isLoading } = useServices({});
+  const { data: result, isLoading } = useServices({});
+  const services = result?.data;
 
   const handleSearch = (query: string, location: string) => {
     const params = new URLSearchParams();

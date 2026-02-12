@@ -10,10 +10,11 @@ import { Package, MessageSquare, CheckCircle, Clock, AlertCircle, Plus } from "l
 
 export default function Dashboard() {
   const { data: company, isLoading: companyLoading } = useMyCompany();
-  const { data: services, isLoading: servicesLoading } = useServices({ 
+  const { data: servicesResult, isLoading: servicesLoading } = useServices({ 
     companyId: company?.id,
     status: undefined // Get all statuses for provider
   });
+  const services = servicesResult?.data;
   const { data: inquiries, isLoading: inquiriesLoading } = useInquiriesForProvider();
 
   const pendingServices = services?.filter(s => s.status === "pending").length || 0;
