@@ -266,8 +266,6 @@ export type Database = {
       is_provider: { Args: never; Returns: boolean }
       owns_company: { Args: { _company_id: string }; Returns: boolean }
       owns_service: { Args: { _service_id: string }; Returns: boolean }
-      show_limit: { Args: never; Returns: number }
-      show_trgm: { Args: { "": string }; Returns: string[] }
     }
     Enums: {
       app_role: "admin" | "provider" | "user"

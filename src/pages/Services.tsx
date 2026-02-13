@@ -6,7 +6,7 @@ import { SearchBar } from "@/components/search/SearchBar";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { useServices } from "@/hooks/useServices";
+import { useSearchServices } from "@/hooks/useServices";
 import { useCategories, useCategoryBySlug } from "@/hooks/useCategories";
 import { Grid3X3, List, SlidersHorizontal, ChevronLeft, ChevronRight } from "lucide-react";
 
@@ -18,12 +18,16 @@ const Services = () => {
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   
   const currentPage = Number(searchParams.get("page") || "1");
+  const searchQuery = searchParams.get("q") || "";
+  const searchLocation = searchParams.get("location") || "";
 
   const { data: category } = useCategoryBySlug(slug);
   const { data: categories } = useCategories();
-  const { data: result, isLoading } = useServices({
+  const { data: result, isLoading } = useSearchServices({
+    query: searchQuery || undefined,
+    location: searchLocation || undefined,
     categorySlug: slug,
-    featured: searchParams.get("featured") === "true",
+    featured: searchParams.get("featured") === "true" || undefined,
     page: currentPage,
     pageSize: PAGE_SIZE,
   });
@@ -57,22 +61,6 @@ const Services = () => {
     setSearchParams(params);
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
-
-  const filteredServices = services?.filter((service) => {
-    const query = searchParams.get("q")?.toLowerCase();
-    const location = searchParams.get("location")?.toLowerCase();
-    
-    if (query && !service.title.toLowerCase().includes(query) && 
-        !service.description?.toLowerCase().includes(query)) {
-      return false;
-    }
-    
-    if (location && !service.location?.toLowerCase().includes(location)) {
-      return false;
-    }
-    
-    return true;
-  });
 
   const renderPagination = () => {
     if (totalPages <= 1) return null;
@@ -162,8 +150,8 @@ const Services = () => {
           <div className="mt-4">
             <SearchBar 
               onSearch={handleSearch}
-              defaultQuery={searchParams.get("q") || ""}
-              defaultLocation={searchParams.get("location") || ""}
+              defaultQuery={searchQuery}
+              defaultLocation={searchLocation}
             />
           </div>
         </div>
@@ -216,7 +204,7 @@ const Services = () => {
                 <Skeleton key={i} className="h-80 rounded-xl" />
               ))}
             </div>
-          ) : filteredServices && filteredServices.length > 0 ? (
+          ) : services && services.length > 0 ? (
             <>
               <p className="mb-4 text-sm text-muted-foreground">
                 {totalCount} service{totalCount !== 1 ? "s" : ""} found
@@ -226,7 +214,7 @@ const Services = () => {
                 ? "grid gap-6 sm:grid-cols-2 lg:grid-cols-3" 
                 : "space-y-4"
               }>
-                {filteredServices.map((service) => (
+                {services.map((service) => (
                   <ServiceCard key={service.id} service={service} />
                 ))}
               </div>
