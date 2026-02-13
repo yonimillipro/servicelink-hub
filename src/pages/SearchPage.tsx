@@ -1,40 +1,31 @@
-import { useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { Layout } from "@/components/layout/Layout";
 import { SearchBar } from "@/components/search/SearchBar";
 import { ServiceCard } from "@/components/service/ServiceCard";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useServices } from "@/hooks/useServices";
+import { useSearchServices } from "@/hooks/useServices";
 import { Search } from "lucide-react";
 
 export default function SearchPage() {
   const [searchParams, setSearchParams] = useSearchParams();
 
-  const { data: result, isLoading } = useServices({});
-  const services = result?.data;
+  const query = searchParams.get("q") || "";
+  const location = searchParams.get("location") || "";
+  const hasSearched = !!(query || location);
 
-  const handleSearch = (query: string, location: string) => {
+  const { data: result, isLoading } = useSearchServices({
+    query: query || undefined,
+    location: location || undefined,
+  });
+  const services = result?.data;
+  const totalCount = result?.count ?? 0;
+
+  const handleSearch = (q: string, loc: string) => {
     const params = new URLSearchParams();
-    if (query) params.set("q", query);
-    if (location) params.set("location", location);
+    if (q) params.set("q", q);
+    if (loc) params.set("location", loc);
     setSearchParams(params);
   };
-
-  const query = searchParams.get("q")?.toLowerCase() || "";
-  const location = searchParams.get("location")?.toLowerCase() || "";
-
-  const filteredServices = services?.filter((service) => {
-    if (query && !service.title.toLowerCase().includes(query) &&
-        !service.description?.toLowerCase().includes(query)) {
-      return false;
-    }
-    if (location && !service.location?.toLowerCase().includes(location)) {
-      return false;
-    }
-    return true;
-  });
-
-  const hasSearched = query || location;
 
   return (
     <Layout>
@@ -45,8 +36,8 @@ export default function SearchPage() {
           <div className="mt-6">
             <SearchBar
               onSearch={handleSearch}
-              defaultQuery={searchParams.get("q") || ""}
-              defaultLocation={searchParams.get("location") || ""}
+              defaultQuery={query}
+              defaultLocation={location}
             />
           </div>
         </div>
@@ -65,13 +56,13 @@ export default function SearchPage() {
                 <Skeleton key={i} className="h-80 rounded-xl" />
               ))}
             </div>
-          ) : filteredServices && filteredServices.length > 0 ? (
+          ) : services && services.length > 0 ? (
             <>
               <p className="mb-4 text-sm text-muted-foreground">
-                {filteredServices.length} result{filteredServices.length !== 1 ? "s" : ""} found
+                {totalCount} result{totalCount !== 1 ? "s" : ""} found
               </p>
               <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                {filteredServices.map((service) => (
+                {services.map((service) => (
                   <ServiceCard key={service.id} service={service} />
                 ))}
               </div>
