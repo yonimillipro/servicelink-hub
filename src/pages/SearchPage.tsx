@@ -29,46 +29,42 @@ export default function SearchPage() {
 
   return (
     <Layout>
-      <section className="border-b bg-card py-8 md:py-12">
+      <section className="border-b bg-card py-6 sm:py-8 md:py-12">
         <div className="container-padded">
           <h1 className="text-foreground">Search Services</h1>
-          <p className="mt-2 text-muted-foreground">Find the right service provider for your needs</p>
-          <div className="mt-6">
-            <SearchBar
-              onSearch={handleSearch}
-              defaultQuery={query}
-              defaultLocation={location}
-            />
+          <p className="mt-1.5 text-sm text-muted-foreground sm:text-base">Find the right service provider for your needs</p>
+          <div className="mt-4 sm:mt-6">
+            <SearchBar onSearch={handleSearch} defaultQuery={query} defaultLocation={location} />
           </div>
         </div>
       </section>
 
-      <section className="py-8">
+      <section className="py-6 sm:py-8">
         <div className="container-padded">
           {!hasSearched ? (
-            <div className="py-20 text-center">
-              <Search className="mx-auto h-16 w-16 text-muted-foreground/30" />
-              <p className="mt-4 text-lg text-muted-foreground">Enter a search term to find services</p>
+            <div className="py-16 text-center sm:py-20">
+              <Search className="mx-auto h-12 w-12 text-muted-foreground/30 sm:h-16 sm:w-16" />
+              <p className="mt-3 text-base text-muted-foreground sm:text-lg">Enter a search term to find services</p>
             </div>
           ) : isLoading ? (
-            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 sm:gap-6">
               {Array.from({ length: 6 }).map((_, i) => (
-                <Skeleton key={i} className="h-80 rounded-xl" />
+                <Skeleton key={i} className="h-72 rounded-xl sm:h-80" />
               ))}
             </div>
           ) : services && services.length > 0 ? (
             <>
-              <p className="mb-4 text-sm text-muted-foreground">
+              <p className="mb-4 text-xs text-muted-foreground sm:text-sm">
                 {totalCount} result{totalCount !== 1 ? "s" : ""} found
               </p>
-              <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 sm:gap-6">
                 {services.map((service) => (
                   <ServiceCard key={service.id} service={service} />
                 ))}
               </div>
             </>
           ) : (
-            <div className="py-20 text-center">
+            <div className="py-16 text-center sm:py-20">
               <p className="text-muted-foreground">No services found for your search.</p>
             </div>
           )}

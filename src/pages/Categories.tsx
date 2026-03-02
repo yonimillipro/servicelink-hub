@@ -8,33 +8,31 @@ const Categories = () => {
 
   return (
     <Layout>
-      {/* Header */}
-      <section className="border-b bg-card py-8 md:py-12">
+      <section className="border-b bg-card py-6 sm:py-8 md:py-12">
         <div className="container-padded">
           <h1 className="text-foreground">All Categories</h1>
-          <p className="mt-2 text-muted-foreground">
+          <p className="mt-1.5 text-sm text-muted-foreground sm:text-base">
             Browse services by category to find exactly what you need
           </p>
         </div>
       </section>
 
-      {/* Categories Grid */}
-      <section className="py-8 md:py-12">
+      <section className="py-6 sm:py-8 md:py-12">
         <div className="container-padded">
           {isLoading ? (
-            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              {Array.from({ length: 8 }).map((_, i) => (
-                <Skeleton key={i} className="h-24 rounded-xl" />
+            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 sm:gap-4">
+              {Array.from({ length: 9 }).map((_, i) => (
+                <Skeleton key={i} className="h-20 rounded-xl sm:h-24" />
               ))}
             </div>
           ) : categories && categories.length > 0 ? (
-            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 sm:gap-4">
               {categories.map((category) => (
                 <CategoryCard key={category.id} category={category} />
               ))}
             </div>
           ) : (
-            <div className="rounded-xl bg-secondary/50 py-12 text-center">
+            <div className="rounded-xl border border-dashed border-border py-12 text-center">
               <p className="text-muted-foreground">No categories available.</p>
             </div>
           )}
