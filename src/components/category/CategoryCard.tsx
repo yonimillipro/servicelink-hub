@@ -11,7 +11,6 @@ interface CategoryCardProps {
   className?: string;
 }
 
-// Map icon names to Lucide icons
 const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
   Home: Icons.Home,
   Code: Icons.Code,
@@ -39,14 +38,14 @@ export function CategoryCard({ category, variant = "default", className }: Categ
       <Link
         to={`/categories/${category.slug}`}
         className={cn(
-          "flex flex-col items-center gap-2 rounded-xl bg-card p-4 text-center transition-all hover:bg-primary hover:text-primary-foreground shadow-sm",
+          "group flex flex-col items-center gap-2.5 rounded-xl bg-card p-4 sm:p-5 text-center border border-border transition-all duration-200 hover:border-primary/30 hover:shadow-md",
           className
         )}
       >
-        <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
-          <IconComponent className="h-6 w-6 text-primary" />
+        <div className="flex h-11 w-11 sm:h-12 sm:w-12 items-center justify-center rounded-xl bg-primary/10 transition-colors duration-200 group-hover:bg-primary group-hover:text-primary-foreground">
+          <IconComponent className="h-5 w-5 sm:h-6 sm:w-6 text-primary group-hover:text-primary-foreground transition-colors duration-200" />
         </div>
-        <span className="text-sm font-medium">{category.name}</span>
+        <span className="text-xs sm:text-sm font-medium text-foreground">{category.name}</span>
       </Link>
     );
   }
@@ -55,17 +54,17 @@ export function CategoryCard({ category, variant = "default", className }: Categ
     <Link
       to={`/categories/${category.slug}`}
       className={cn(
-        "group flex items-center gap-4 rounded-xl bg-card p-4 shadow-sm transition-all hover:shadow-md",
+        "group flex items-center gap-4 rounded-xl bg-card p-4 sm:p-5 border border-border transition-all duration-200 hover:border-primary/30 hover:shadow-md",
         className
       )}
     >
-      <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-primary/10 transition-colors group-hover:bg-primary">
-        <IconComponent className="h-7 w-7 text-primary transition-colors group-hover:text-primary-foreground" />
+      <div className="flex h-12 w-12 sm:h-14 sm:w-14 shrink-0 items-center justify-center rounded-xl bg-primary/10 transition-colors duration-200 group-hover:bg-primary">
+        <IconComponent className="h-6 w-6 sm:h-7 sm:w-7 text-primary transition-colors duration-200 group-hover:text-primary-foreground" />
       </div>
-      <div className="flex-1">
-        <h3 className="font-semibold text-foreground">{category.name}</h3>
+      <div className="min-w-0 flex-1">
+        <h3 className="text-sm sm:text-base font-semibold text-foreground">{category.name}</h3>
         {category.description && (
-          <p className="mt-1 text-sm text-muted-foreground line-clamp-1">
+          <p className="mt-0.5 text-xs sm:text-sm text-muted-foreground line-clamp-1">
             {category.description}
           </p>
         )}

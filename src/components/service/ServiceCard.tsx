@@ -11,29 +11,26 @@ interface ServiceCardProps {
 export function ServiceCard({ service, className }: ServiceCardProps) {
   const formatPrice = (price: number | null, type: string | null) => {
     if (!price) return "Contact for price";
-    
     const formatted = new Intl.NumberFormat("en-ET", {
       style: "currency",
       currency: "ETB",
       minimumFractionDigits: 0,
     }).format(price);
-
     switch (type) {
-      case "starting_from":
-        return `From ${formatted}`;
-      case "negotiable":
-        return "Negotiable";
-      default:
-        return formatted;
+      case "starting_from": return `From ${formatted}`;
+      case "negotiable": return "Negotiable";
+      default: return formatted;
     }
   };
 
   return (
     <Link
       to={`/services/${service.id}`}
-      className={cn("group relative block overflow-hidden rounded-xl bg-card card-hover", className)}
+      className={cn(
+        "group relative block overflow-hidden rounded-xl bg-card card-hover",
+        className
+      )}
     >
-      {/* Featured Badge */}
       {service.is_featured && (
         <div className="featured-badge">
           <Star className="h-3 w-3 fill-current" />
@@ -41,52 +38,44 @@ export function ServiceCard({ service, className }: ServiceCardProps) {
         </div>
       )}
 
-      {/* Image */}
-      <div className="aspect-[4/3] overflow-hidden bg-secondary">
+      <div className="aspect-[4/3] overflow-hidden bg-muted">
         <img
           src={service.image || "/placeholder.svg"}
           alt={service.title}
-          className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+          loading="lazy"
+          className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
         />
       </div>
 
-      {/* Content */}
-      <div className="p-4">
-        {/* Category */}
+      <div className="p-4 sm:p-5">
         {service.categories && (
-          <span className="category-badge bg-primary/10 text-primary">
+          <span className="category-badge bg-primary/10 text-primary text-[11px]">
             {service.categories.name}
           </span>
         )}
 
-        {/* Title */}
-        <h3 className="mt-2 line-clamp-2 font-semibold text-foreground group-hover:text-primary transition-colors">
+        <h3 className="mt-2 line-clamp-2 text-base font-semibold text-foreground group-hover:text-primary transition-colors sm:text-[15px]">
           {service.title}
         </h3>
 
-        {/* Company */}
         {service.companies && (
-          <p className="mt-1 text-sm text-muted-foreground">
+          <p className="mt-1.5 text-sm text-muted-foreground truncate">
             by {service.companies.name}
           </p>
         )}
 
-        {/* Location */}
-        <div className="mt-3 flex items-center gap-3 text-sm text-muted-foreground">
-          {service.location && (
-            <span className="flex items-center gap-1">
-              <MapPin className="h-3.5 w-3.5" />
-              {service.location}
-            </span>
-          )}
-        </div>
+        {service.location && (
+          <div className="mt-2.5 flex items-center gap-1.5 text-xs text-muted-foreground">
+            <MapPin className="h-3.5 w-3.5 shrink-0" />
+            <span className="truncate">{service.location}</span>
+          </div>
+        )}
 
-        {/* Price */}
-        <div className="mt-3 flex items-center justify-between">
-          <span className="price-tag text-lg">
+        <div className="mt-3 flex items-center justify-between border-t border-border pt-3">
+          <span className="price-tag text-base sm:text-lg">
             {formatPrice(service.price, service.price_type)}
           </span>
-          <span className="flex items-center gap-1 text-xs text-muted-foreground">
+          <span className="flex items-center gap-1 text-[11px] text-muted-foreground">
             <Clock className="h-3 w-3" />
             {new Date(service.created_at).toLocaleDateString()}
           </span>

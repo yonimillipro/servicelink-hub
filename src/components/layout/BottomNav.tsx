@@ -16,33 +16,23 @@ export function BottomNav() {
   ];
 
   return (
-    <nav className="bottom-nav md:hidden">
-      <div className="flex items-center justify-around">
+    <nav className="bottom-nav md:hidden" aria-label="Mobile navigation">
+      <div className="flex items-center justify-around px-1">
         {navItems.map((item) => {
           const isActive = location.pathname === item.href;
-
           if (item.isMain) {
             return (
-              <Link
-                key={item.href}
-                to={item.href}
-                className="flex -mt-4"
-              >
-                <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lg">
-                  <item.icon className="h-6 w-6" />
+              <Link key={item.label} to={item.href} className="flex -mt-4">
+                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lg transition-transform active:scale-95">
+                  <item.icon className="h-5 w-5" />
                 </div>
               </Link>
             );
           }
-
           return (
-            <Link
-              key={item.href}
-              to={item.href}
-              className={cn("bottom-nav-item", isActive && "active")}
-            >
+            <Link key={item.label} to={item.href} className={cn("bottom-nav-item min-w-[48px]", isActive && "active")}>
               <item.icon className="h-5 w-5" />
-              <span className="text-xs">{item.label}</span>
+              <span className="text-[10px]">{item.label}</span>
             </Link>
           );
         })}
