@@ -6,7 +6,7 @@ import { SearchBar } from "@/components/search/SearchBar";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { useSearchServices } from "@/hooks/useServices";
+import { useServices } from "@/hooks/useServices";
 import { useCategories, useCategoryBySlug } from "@/hooks/useCategories";
 import { Grid3X3, List, ChevronLeft, ChevronRight } from "lucide-react";
 
@@ -16,6 +16,7 @@ const Services = () => {
   const { slug } = useParams();
   const [searchParams, setSearchParams] = useSearchParams();
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
+  const [sortBy, setSortBy] = useState("none");
 
   const currentPage = Number(searchParams.get("page") || "1");
   const searchQuery = searchParams.get("q") || "";
@@ -23,16 +24,42 @@ const Services = () => {
 
   const { data: category } = useCategoryBySlug(slug);
   const { data: categories } = useCategories();
-  const { data: result, isLoading } = useSearchServices({
-    query: searchQuery || undefined,
-    location: searchLocation || undefined,
+  const { data: result, isLoading } = useServices({
     categorySlug: slug,
     featured: searchParams.get("featured") === "true" || undefined,
     page: currentPage,
     pageSize: PAGE_SIZE,
   });
 
-  const services = result?.data;
+  // Get services and apply client-side sorting + search filtering
+  let services = result?.data || [];
+
+  // Client-side search filtering
+  if (searchQuery) {
+    const q = searchQuery.toLowerCase();
+    services = services.filter(s =>
+      s.title.toLowerCase().includes(q) ||
+      (s.description && s.description.toLowerCase().includes(q))
+    );
+  }
+  if (searchLocation) {
+    const loc = searchLocation.toLowerCase();
+    services = services.filter(s =>
+      s.location && s.location.toLowerCase().includes(loc)
+    );
+  }
+
+  // Client-side sorting
+  if (sortBy === "newest") {
+    services = [...services].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+  } else if (sortBy === "oldest") {
+    services = [...services].sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime());
+  } else if (sortBy === "price-low") {
+    services = [...services].sort((a, b) => (a.price ?? 0) - (b.price ?? 0));
+  } else if (sortBy === "price-high") {
+    services = [...services].sort((a, b) => (b.price ?? 0) - (a.price ?? 0));
+  }
+
   const totalPages = result?.totalPages ?? 1;
   const totalCount = result?.count ?? 0;
 
@@ -127,11 +154,12 @@ const Services = () => {
               </SelectContent>
             </Select>
 
-            <Select defaultValue="newest">
+            <Select value={sortBy} onValueChange={setSortBy}>
               <SelectTrigger className="w-[140px] sm:w-[150px]">
                 <SelectValue placeholder="Sort by" />
               </SelectTrigger>
               <SelectContent>
+                <SelectItem value="none">None</SelectItem>
                 <SelectItem value="newest">Newest First</SelectItem>
                 <SelectItem value="oldest">Oldest First</SelectItem>
                 <SelectItem value="price-low">Price: Low to High</SelectItem>
