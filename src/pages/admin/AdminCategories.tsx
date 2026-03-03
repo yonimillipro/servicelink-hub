@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { AdminLayout } from "@/components/admin/AdminLayout";
-import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -37,7 +36,7 @@ import {
   useDeleteCategory,
 } from "@/hooks/useCategories";
 import * as Icons from "lucide-react";
-import { Plus, Edit, Trash2, Loader2 } from "lucide-react";
+import { Plus, Edit, Trash2, Loader2, Folder } from "lucide-react";
 import { toast } from "sonner";
 
 const iconOptions = [
@@ -144,56 +143,60 @@ export default function AdminCategories() {
   const isSaving = createCategory.isPending || updateCategory.isPending;
 
   return (
-    <AdminLayout title="Categories" description="Manage service categories">
-      <div className="mb-4 flex justify-end">
+    <AdminLayout title="All Categories" description="Browse and manage service categories">
+      <div className="mb-5 flex justify-end">
         <Button onClick={openCreate} className="gap-2">
           <Plus className="h-4 w-4" /> Add Category
         </Button>
       </div>
 
       {isLoading ? (
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {Array.from({ length: 6 }).map((_, i) => (
-            <Skeleton key={i} className="h-24" />
+        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 sm:gap-4">
+          {Array.from({ length: 9 }).map((_, i) => (
+            <Skeleton key={i} className="h-20 rounded-xl sm:h-24" />
           ))}
         </div>
       ) : categories && categories.length > 0 ? (
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 sm:gap-4">
           {categories.map((category) => {
             const IconComponent = category.icon
-              ? iconMap[category.icon] || Icons.Folder
-              : Icons.Folder;
+              ? iconMap[category.icon] || Folder
+              : Folder;
             return (
-              <Card key={category.id}>
-                <CardContent className="flex items-center gap-4 p-4">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10">
-                    <IconComponent className="h-6 w-6 text-primary" />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <h3 className="font-semibold truncate">{category.name}</h3>
-                    <p className="text-sm text-muted-foreground">
-                      {category.service_count || 0} services
+              <div
+                key={category.id}
+                className="group relative flex items-start gap-4 rounded-xl border bg-card p-4 transition-all hover:shadow-md sm:p-5"
+              >
+                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg bg-primary/10 sm:h-12 sm:w-12">
+                  <IconComponent className="h-5 w-5 text-primary sm:h-6 sm:w-6" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <h3 className="font-semibold text-foreground truncate">{category.name}</h3>
+                  {category.description && (
+                    <p className="mt-0.5 text-sm text-muted-foreground line-clamp-2">
+                      {category.description}
                     </p>
-                  </div>
-                  <div className="flex gap-1">
-                    <Button variant="ghost" size="icon" onClick={() => openEdit(category)}>
-                      <Edit className="h-4 w-4" />
-                    </Button>
-                    <Button variant="ghost" size="icon" onClick={() => setDeleteId(category.id)}>
-                      <Trash2 className="h-4 w-4 text-destructive" />
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
+                  )}
+                  <p className="mt-1 text-xs text-muted-foreground">
+                    {category.service_count || 0} services
+                  </p>
+                </div>
+                <div className="flex shrink-0 gap-1">
+                  <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => openEdit(category)}>
+                    <Edit className="h-4 w-4" />
+                  </Button>
+                  <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => setDeleteId(category.id)}>
+                    <Trash2 className="h-4 w-4 text-destructive" />
+                  </Button>
+                </div>
+              </div>
             );
           })}
         </div>
       ) : (
-        <Card>
-          <CardContent className="py-12 text-center">
-            <p className="text-muted-foreground">No categories found</p>
-          </CardContent>
-        </Card>
+        <div className="rounded-xl border border-dashed border-border py-12 text-center">
+          <p className="text-muted-foreground">No categories available.</p>
+        </div>
       )}
 
       {/* Create / Edit Dialog */}
@@ -243,7 +246,7 @@ export default function AdminCategories() {
                 </SelectTrigger>
                 <SelectContent>
                   {iconOptions.map((name) => {
-                    const Ic = iconMap[name] || Icons.Folder;
+                    const Ic = iconMap[name] || Folder;
                     return (
                       <SelectItem key={name} value={name}>
                         <span className="flex items-center gap-2">
