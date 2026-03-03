@@ -73,7 +73,7 @@ export function Header() {
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end" className="w-48">
-                    {isProvider && (
+                    {isProvider && !isAdmin && (
                       <DropdownMenuItem asChild>
                         <Link to="/dashboard" className="flex items-center gap-2">
                           <Settings className="h-4 w-4" /> Dashboard
@@ -93,7 +93,7 @@ export function Header() {
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
-                {isProvider && (
+                {isProvider && !isAdmin && (
                   <Link to="/dashboard/services/add">
                     <Button size="sm" className="gap-1.5">
                       <Plus className="h-4 w-4" /> Post Service
@@ -146,7 +146,7 @@ export function Header() {
               <hr className="my-2 border-border" />
               {user ? (
                 <>
-                  {isProvider && (
+                  {isProvider && !isAdmin && (
                     <Link to="/dashboard" onClick={() => setIsMenuOpen(false)} className="rounded-lg px-4 py-2.5 text-sm font-medium text-foreground hover:bg-secondary">
                       Dashboard
                     </Link>
@@ -159,7 +159,7 @@ export function Header() {
                   <button onClick={() => { signOut(); setIsMenuOpen(false); }} className="rounded-lg px-4 py-2.5 text-left text-sm font-medium text-foreground hover:bg-secondary">
                     Sign Out
                   </button>
-                  {isProvider && (
+                  {isProvider && !isAdmin && (
                     <Link to="/dashboard/services/add" onClick={() => setIsMenuOpen(false)}>
                       <Button className="mt-1 w-full gap-2"><Plus className="h-4 w-4" />Post Service</Button>
                     </Link>

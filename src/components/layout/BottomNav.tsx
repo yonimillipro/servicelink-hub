@@ -5,14 +5,18 @@ import { useAuth } from "@/hooks/useAuth";
 
 export function BottomNav() {
   const location = useLocation();
-  const { user } = useAuth();
+  const { user, isAdmin, isProvider } = useAuth();
+
+  const accountHref = user ? (isAdmin ? "/admin" : "/dashboard") : "/login";
+  const postHref = user ? "/dashboard/services/add" : "/login";
+  const showPost = !isAdmin && (isProvider || !user);
 
   const navItems = [
     { icon: Home, label: "Home", href: "/" },
     { icon: Grid3X3, label: "Categories", href: "/categories" },
-    { icon: Plus, label: "Post", href: user ? "/dashboard/services/add" : "/login", isMain: true },
+    ...(showPost ? [{ icon: Plus, label: "Post", href: postHref, isMain: true }] : []),
     { icon: Search, label: "Search", href: "/services" },
-    { icon: User, label: "Account", href: user ? "/dashboard" : "/login" },
+    { icon: User, label: isAdmin ? "Admin" : "Account", href: accountHref },
   ];
 
   return (
