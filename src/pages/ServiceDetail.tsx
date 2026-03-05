@@ -24,6 +24,7 @@ const ServiceDetail = () => {
   const { id } = useParams();
   const { data: service, isLoading } = useServiceById(id);
   const createInquiry = useCreateInquiry();
+  const { user } = useAuth();
 
   const [formData, setFormData] = useState({ name: "", email: "", phone: "", message: "" });
   const [submitted, setSubmitted] = useState(false);
