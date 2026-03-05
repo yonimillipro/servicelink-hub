@@ -1,10 +1,10 @@
 import { Layout } from "@/components/layout/Layout";
 import { CategoryCard } from "@/components/category/CategoryCard";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useCategories } from "@/hooks/useCategories";
+import { useCategoriesWithCount } from "@/hooks/useCategories";
 
 const Categories = () => {
-  const { data: categories, isLoading } = useCategories();
+  const { data: categories, isLoading } = useCategoriesWithCount();
 
   return (
     <Layout>
@@ -33,7 +33,7 @@ const Categories = () => {
             </div>
           ) : (
             <div className="rounded-xl border border-dashed border-border py-12 text-center">
-              <p className="text-muted-foreground">No categories available.</p>
+              <p className="text-muted-foreground">No categories with active services yet.</p>
             </div>
           )}
         </div>

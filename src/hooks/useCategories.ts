@@ -92,3 +92,51 @@ export function useDeleteCategory() {
     },
   });
 }
+
+export interface CategoryWithCount {
+  id: string;
+  name: string;
+  slug: string;
+  description: string | null;
+  icon: string | null;
+  service_count: number;
+  created_at: string;
+  updated_at: string;
+}
+
+export function useCategoriesWithCount() {
+  return useQuery({
+    queryKey: ["categories-with-count"],
+    queryFn: async (): Promise<CategoryWithCount[]> => {
+      // Fetch all categories
+      const { data: categories, error: catError } = await supabase
+        .from("categories")
+        .select("*")
+        .order("name");
+      if (catError) throw catError;
+
+      // Fetch live approved service counts grouped by category_id
+      const { data: counts, error: countError } = await supabase
+        .from("services")
+        .select("category_id")
+        .eq("status", "approved");
+      if (countError) throw countError;
+
+      // Build a count map
+      const countMap: Record<string, number> = {};
+      for (const row of counts || []) {
+        if (row.category_id) {
+          countMap[row.category_id] = (countMap[row.category_id] || 0) + 1;
+        }
+      }
+
+      // Merge counts into categories, only return categories with at least 1 service
+      return (categories || [])
+        .map((cat) => ({
+          ...cat,
+          service_count: countMap[cat.id] || 0,
+        }))
+        .filter((cat) => cat.service_count > 0);
+    },
+  });
+}

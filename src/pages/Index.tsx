@@ -5,7 +5,7 @@ import { CategoryCard } from "@/components/category/CategoryCard";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useServices } from "@/hooks/useServices";
-import { useCategories } from "@/hooks/useCategories";
+import { useCategoriesWithCount } from "@/hooks/useCategories";
 import { useAuth } from "@/hooks/useAuth";
 import { ArrowRight, Shield, Clock, Users, Star } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
@@ -22,7 +22,7 @@ const Index = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const { user, isAdmin, isProvider } = useAuth();
-  const { data: categories, isLoading: categoriesLoading } = useCategories();
+  const { data: categories, isLoading: categoriesLoading } = useCategoriesWithCount();
   const { data: featuredResult, isLoading: featuredLoading } = useServices({ featured: true, limit: 6 });
   const featuredServices = featuredResult?.data;
   const { data: recentResult, isLoading: recentLoading } = useServices({ limit: 6 });
