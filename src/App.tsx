@@ -39,6 +39,11 @@ import AdminServices from "./pages/admin/AdminServices";
 import AdminCategories from "./pages/admin/AdminCategories";
 import AdminCompanies from "./pages/admin/AdminCompanies";
 
+const CategoryRedirect = () => {
+  const { slug } = useParams();
+  return <Navigate to={`/services?category=${slug}`} replace />;
+};
+
 const queryClient = new QueryClient();
 
 const App = () => (
