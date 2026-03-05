@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useServiceById } from "@/hooks/useServices";
 import { useCreateInquiry } from "@/hooks/useInquiries";
+import { useAuth } from "@/hooks/useAuth";
 import { MapPin, ChevronLeft, CheckCircle2, Loader2, Mail } from "lucide-react";
 import { toast } from "sonner";
 import { z } from "zod";
@@ -23,6 +24,7 @@ const ServiceDetail = () => {
   const { id } = useParams();
   const { data: service, isLoading } = useServiceById(id);
   const createInquiry = useCreateInquiry();
+  const { user } = useAuth();
 
   const [formData, setFormData] = useState({ name: "", email: "", phone: "", message: "" });
   const [submitted, setSubmitted] = useState(false);
@@ -49,6 +51,7 @@ const ServiceDetail = () => {
         email: formData.email,
         phone: formData.phone || null,
         message: formData.message,
+        user_id: user?.id ?? null,
       });
       setSubmitted(true);
       toast.success("Inquiry sent successfully!");

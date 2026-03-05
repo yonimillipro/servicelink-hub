@@ -20,6 +20,15 @@ export default function DashboardInquiries() {
     }
   };
 
+  const handleReply = async (id: string, email: string) => {
+    try {
+      await updateStatus.mutateAsync({ id, status: "replied" });
+    } catch {
+      // silently ignore — still open mail client
+    }
+    window.location.href = `mailto:${email}`;
+  };
+
   const getStatusBadge = (status: string | null) => {
     switch (status) {
       case "new":
@@ -100,12 +109,13 @@ export default function DashboardInquiries() {
                         Mark as Read
                       </Button>
                     )}
-                    <a href={`mailto:${inquiry.email}`}>
-                      <Button size="sm">
-                        <Mail className="mr-2 h-4 w-4" />
-                        Reply
-                      </Button>
-                    </a>
+                    <Button
+                      size="sm"
+                      onClick={() => handleReply(inquiry.id, inquiry.email)}
+                    >
+                      <Mail className="mr-2 h-4 w-4" />
+                      Reply
+                    </Button>
                   </div>
                 </div>
               </CardContent>

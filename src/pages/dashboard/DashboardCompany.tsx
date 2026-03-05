@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { DashboardLayout } from "@/components/dashboard/DashboardLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -27,7 +27,7 @@ export default function DashboardCompany() {
   });
 
   // Update form when company data loads
-  useState(() => {
+  useEffect(() => {
     if (company) {
       setFormData({
         name: company.name || "",
@@ -38,7 +38,7 @@ export default function DashboardCompany() {
         logo_url: company.logo_url || "",
       });
     }
-  });
+  }, [company]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
