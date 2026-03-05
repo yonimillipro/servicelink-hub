@@ -22,7 +22,7 @@ const Index = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const { user, isAdmin, isProvider } = useAuth();
-  const { data: categories, isLoading: categoriesLoading } = useCategories();
+  const { data: categories, isLoading: categoriesLoading } = useCategoriesWithCount();
   const { data: featuredResult, isLoading: featuredLoading } = useServices({ featured: true, limit: 6 });
   const featuredServices = featuredResult?.data;
   const { data: recentResult, isLoading: recentLoading } = useServices({ limit: 6 });

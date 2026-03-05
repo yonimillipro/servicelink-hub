@@ -33,7 +33,7 @@ const Categories = () => {
             </div>
           ) : (
             <div className="rounded-xl border border-dashed border-border py-12 text-center">
-              <p className="text-muted-foreground">No categories available.</p>
+              <p className="text-muted-foreground">No categories with active services yet.</p>
             </div>
           )}
         </div>
