@@ -73,8 +73,14 @@ const Services = () => {
   };
 
   const handleCategoryChange = (value: string) => {
-    if (value === "all") window.location.href = "/services";
-    else window.location.href = `/categories/${value}`;
+    const params = new URLSearchParams(searchParams);
+    if (value === "all") {
+      params.delete("category");
+    } else {
+      params.set("category", value);
+    }
+    params.delete("page");
+    setSearchParams(params);
   };
 
   const goToPage = (page: number) => {
