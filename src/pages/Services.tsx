@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useParams, useSearchParams } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 import { Layout } from "@/components/layout/Layout";
 import { ServiceCard } from "@/components/service/ServiceCard";
 import { SearchBar } from "@/components/search/SearchBar";
@@ -7,13 +7,12 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useServices } from "@/hooks/useServices";
-import { useCategories, useCategoryBySlug } from "@/hooks/useCategories";
+import { useCategories } from "@/hooks/useCategories";
 import { Grid3X3, List, ChevronLeft, ChevronRight } from "lucide-react";
 
 const PAGE_SIZE = 12;
 
 const Services = () => {
-  const { slug } = useParams();
   const [searchParams, setSearchParams] = useSearchParams();
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [sortBy, setSortBy] = useState("none");
@@ -21,11 +20,13 @@ const Services = () => {
   const currentPage = Number(searchParams.get("page") || "1");
   const searchQuery = searchParams.get("q") || "";
   const searchLocation = searchParams.get("location") || "";
+  const selectedCategorySlug = searchParams.get("category") || "";
 
-  const { data: category } = useCategoryBySlug(slug);
   const { data: categories } = useCategories();
+  const selectedCategory = categories?.find((c) => c.slug === selectedCategorySlug) || null;
+
   const { data: result, isLoading } = useServices({
-    categorySlug: slug,
+    categorySlug: selectedCategorySlug || undefined,
     featured: searchParams.get("featured") === "true" || undefined,
     page: currentPage,
     pageSize: PAGE_SIZE,
@@ -72,8 +73,14 @@ const Services = () => {
   };
 
   const handleCategoryChange = (value: string) => {
-    if (value === "all") window.location.href = "/services";
-    else window.location.href = `/categories/${value}`;
+    const params = new URLSearchParams(searchParams);
+    if (value === "all") {
+      params.delete("category");
+    } else {
+      params.set("category", value);
+    }
+    params.delete("page");
+    setSearchParams(params);
   };
 
   const goToPage = (page: number) => {
@@ -119,9 +126,9 @@ const Services = () => {
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div>
               <h1 className="text-xl font-bold text-foreground sm:text-2xl md:text-3xl">
-                {category ? category.name : "All Services"}
+                {selectedCategory ? selectedCategory.name : "All Services"}
               </h1>
-              {category?.description && <p className="mt-1 text-sm text-muted-foreground">{category.description}</p>}
+              {selectedCategory?.description && <p className="mt-1 text-sm text-muted-foreground">{selectedCategory.description}</p>}
             </div>
             <div className="flex items-center gap-2">
               <Button variant={viewMode === "grid" ? "default" : "outline"} size="icon" className="h-9 w-9" onClick={() => setViewMode("grid")}>
@@ -142,7 +149,7 @@ const Services = () => {
       <section className="py-5 sm:py-6 md:py-8">
         <div className="container-padded">
           <div className="mb-5 flex flex-wrap items-center gap-2 sm:gap-3">
-            <Select value={slug || "all"} onValueChange={handleCategoryChange}>
+            <Select value={selectedCategorySlug || "all"} onValueChange={handleCategoryChange}>
               <SelectTrigger className="w-[160px] sm:w-[180px]">
                 <SelectValue placeholder="Category" />
               </SelectTrigger>
