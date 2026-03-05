@@ -126,9 +126,9 @@ const Services = () => {
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div>
               <h1 className="text-xl font-bold text-foreground sm:text-2xl md:text-3xl">
-                {category ? category.name : "All Services"}
+                {selectedCategory ? selectedCategory.name : "All Services"}
               </h1>
-              {category?.description && <p className="mt-1 text-sm text-muted-foreground">{category.description}</p>}
+              {selectedCategory?.description && <p className="mt-1 text-sm text-muted-foreground">{selectedCategory.description}</p>}
             </div>
             <div className="flex items-center gap-2">
               <Button variant={viewMode === "grid" ? "default" : "outline"} size="icon" className="h-9 w-9" onClick={() => setViewMode("grid")}>
