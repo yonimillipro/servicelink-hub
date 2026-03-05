@@ -149,7 +149,7 @@ const Services = () => {
       <section className="py-5 sm:py-6 md:py-8">
         <div className="container-padded">
           <div className="mb-5 flex flex-wrap items-center gap-2 sm:gap-3">
-            <Select value={slug || "all"} onValueChange={handleCategoryChange}>
+            <Select value={selectedCategorySlug || "all"} onValueChange={handleCategoryChange}>
               <SelectTrigger className="w-[160px] sm:w-[180px]">
                 <SelectValue placeholder="Category" />
               </SelectTrigger>
