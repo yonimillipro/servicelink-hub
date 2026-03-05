@@ -1,10 +1,10 @@
 import { Layout } from "@/components/layout/Layout";
 import { CategoryCard } from "@/components/category/CategoryCard";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useCategories } from "@/hooks/useCategories";
+import { useCategoriesWithCount } from "@/hooks/useCategories";
 
 const Categories = () => {
-  const { data: categories, isLoading } = useCategories();
+  const { data: categories, isLoading } = useCategoriesWithCount();
 
   return (
     <Layout>
