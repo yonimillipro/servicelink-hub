@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useParams, useSearchParams } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 import { Layout } from "@/components/layout/Layout";
 import { ServiceCard } from "@/components/service/ServiceCard";
 import { SearchBar } from "@/components/search/SearchBar";
@@ -7,13 +7,12 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useServices } from "@/hooks/useServices";
-import { useCategories, useCategoryBySlug } from "@/hooks/useCategories";
+import { useCategories } from "@/hooks/useCategories";
 import { Grid3X3, List, ChevronLeft, ChevronRight } from "lucide-react";
 
 const PAGE_SIZE = 12;
 
 const Services = () => {
-  const { slug } = useParams();
   const [searchParams, setSearchParams] = useSearchParams();
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [sortBy, setSortBy] = useState("none");
@@ -21,11 +20,13 @@ const Services = () => {
   const currentPage = Number(searchParams.get("page") || "1");
   const searchQuery = searchParams.get("q") || "";
   const searchLocation = searchParams.get("location") || "";
+  const selectedCategorySlug = searchParams.get("category") || "";
 
-  const { data: category } = useCategoryBySlug(slug);
   const { data: categories } = useCategories();
+  const selectedCategory = categories?.find((c) => c.slug === selectedCategorySlug) || null;
+
   const { data: result, isLoading } = useServices({
-    categorySlug: slug,
+    categorySlug: selectedCategorySlug || undefined,
     featured: searchParams.get("featured") === "true" || undefined,
     page: currentPage,
     pageSize: PAGE_SIZE,
