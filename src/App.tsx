@@ -2,7 +2,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate, useParams } from "react-router-dom";
 import { ScrollToTop } from "@/components/ScrollToTop";
 import { AuthProvider } from "@/hooks/useAuth";
 import { ThemeProvider } from "@/hooks/useTheme";
@@ -39,6 +39,11 @@ import AdminServices from "./pages/admin/AdminServices";
 import AdminCategories from "./pages/admin/AdminCategories";
 import AdminCompanies from "./pages/admin/AdminCompanies";
 
+const CategoryRedirect = () => {
+  const { slug } = useParams();
+  return <Navigate to={`/services?category=${slug}`} replace />;
+};
+
 const queryClient = new QueryClient();
 
 const App = () => (
@@ -56,7 +61,7 @@ const App = () => (
               <Route path="/services" element={<Services />} />
               <Route path="/services/:id" element={<ServiceDetail />} />
               <Route path="/categories" element={<Categories />} />
-              <Route path="/categories/:slug" element={<Services />} />
+              <Route path="/categories/:slug" element={<CategoryRedirect />} />
               <Route path="/companies/:id" element={<CompanyProfile />} />
               <Route path="/search" element={<SearchPage />} />
               <Route path="/about" element={<About />} />
