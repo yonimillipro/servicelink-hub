@@ -27,7 +27,7 @@ export default function DashboardCompany() {
   });
 
   // Update form when company data loads
-  useState(() => {
+  useEffect(() => {
     if (company) {
       setFormData({
         name: company.name || "",
@@ -38,7 +38,7 @@ export default function DashboardCompany() {
         logo_url: company.logo_url || "",
       });
     }
-  });
+  }, [company]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

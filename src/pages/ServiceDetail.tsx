@@ -51,6 +51,7 @@ const ServiceDetail = () => {
         email: formData.email,
         phone: formData.phone || null,
         message: formData.message,
+        user_id: user?.id ?? null,
       });
       setSubmitted(true);
       toast.success("Inquiry sent successfully!");

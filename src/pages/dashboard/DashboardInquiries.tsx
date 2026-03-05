@@ -109,12 +109,13 @@ export default function DashboardInquiries() {
                         Mark as Read
                       </Button>
                     )}
-                    <a href={`mailto:${inquiry.email}`}>
-                      <Button size="sm">
-                        <Mail className="mr-2 h-4 w-4" />
-                        Reply
-                      </Button>
-                    </a>
+                    <Button
+                      size="sm"
+                      onClick={() => handleReply(inquiry.id, inquiry.email)}
+                    >
+                      <Mail className="mr-2 h-4 w-4" />
+                      Reply
+                    </Button>
                   </div>
                 </div>
               </CardContent>

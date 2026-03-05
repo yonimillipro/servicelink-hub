@@ -37,9 +37,26 @@ export interface PaginatedServices {
 
 export function useServices(options: UseServicesOptions = {}) {
   const { categorySlug, featured, status = "approved", limit, companyId, page = 1, pageSize = 12 } = options;
-  
+
+  // Resolve categorySlug to categoryId (same pattern as useSearchServices)
+  const categoryQuery = useQuery({
+    queryKey: ["category-by-slug", categorySlug],
+    queryFn: async () => {
+      if (!categorySlug) return null;
+      const { data } = await supabase
+        .from("categories")
+        .select("id")
+        .eq("slug", categorySlug)
+        .maybeSingle();
+      return data;
+    },
+    enabled: !!categorySlug,
+  });
+
+  const categoryId = categoryQuery.data?.id ?? undefined;
+
   return useQuery({
-    queryKey: ["services", options],
+    queryKey: ["services", options, categoryId],
     queryFn: async (): Promise<PaginatedServices> => {
       let query = supabase
         .from("services")
@@ -54,8 +71,8 @@ export function useServices(options: UseServicesOptions = {}) {
         query = query.eq("status", status);
       }
 
-      if (categorySlug) {
-        query = query.eq("categories.slug", categorySlug);
+      if (categoryId) {
+        query = query.eq("category_id", categoryId);
       }
 
       if (featured) {
@@ -75,7 +92,7 @@ export function useServices(options: UseServicesOptions = {}) {
       }
 
       const { data, error, count } = await query;
-      
+
       if (error) throw error;
       const total = count ?? 0;
       return {
@@ -86,6 +103,7 @@ export function useServices(options: UseServicesOptions = {}) {
         totalPages: Math.ceil(total / pageSize),
       };
     },
+    enabled: categorySlug ? !!categoryId : true,
   });
 }
 
