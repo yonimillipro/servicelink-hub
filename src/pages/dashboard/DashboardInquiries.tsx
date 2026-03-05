@@ -20,6 +20,15 @@ export default function DashboardInquiries() {
     }
   };
 
+  const handleReply = async (id: string, email: string) => {
+    try {
+      await updateStatus.mutateAsync({ id, status: "replied" });
+    } catch {
+      // silently ignore — still open mail client
+    }
+    window.location.href = `mailto:${email}`;
+  };
+
   const getStatusBadge = (status: string | null) => {
     switch (status) {
       case "new":
