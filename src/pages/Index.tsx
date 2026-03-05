@@ -5,7 +5,7 @@ import { CategoryCard } from "@/components/category/CategoryCard";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useServices } from "@/hooks/useServices";
-import { useCategoriesWithCount } from "@/hooks/useCategories";
+import { useCategoriesWithCount } from "@/hooks/useCategories"; // live counts
 import { useAuth } from "@/hooks/useAuth";
 import { ArrowRight, Shield, Clock, Users, Star } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
