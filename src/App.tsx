@@ -39,6 +39,7 @@ import AdminServices from "./pages/admin/AdminServices";
 import AdminCategories from "./pages/admin/AdminCategories";
 import AdminCompanies from "./pages/admin/AdminCompanies";
 
+// Redirect legacy /categories/:slug URLs to /services?category=:slug
 const CategoryRedirect = () => {
   const { slug } = useParams();
   return <Navigate to={`/services?category=${slug}`} replace />;
