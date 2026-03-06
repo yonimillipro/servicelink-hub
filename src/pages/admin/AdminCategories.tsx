@@ -30,7 +30,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import {
-  useCategories,
+  useCategoriesWithLiveCount,
   useCreateCategory,
   useUpdateCategory,
   useDeleteCategory,
