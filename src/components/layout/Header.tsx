@@ -1,6 +1,6 @@
 import { Link, useLocation } from "react-router-dom";
-import { Search, Menu, X, User, Plus, LogOut, Settings } from "lucide-react";
-import { useState } from "react";
+import { Search, Menu, X, User, Plus, LogOut, LayoutDashboard, ShieldCheck, ChevronDown } from "lucide-react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/hooks/useAuth";
@@ -12,6 +12,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 
 const navLinks = [
   { label: "Home", href: "/" },
@@ -22,37 +23,71 @@ const navLinks = [
 
 export function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
   const location = useLocation();
   const { user, profile, isAdmin, isProvider, signOut } = useAuth();
 
+  useEffect(() => {
+    const handleScroll = () => setScrolled(window.scrollY > 8);
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  // Close mobile menu on route change
+  useEffect(() => {
+    setIsMenuOpen(false);
+  }, [location.pathname]);
+
+  const dashboardHref = isAdmin ? "/admin" : "/dashboard";
+  const dashboardLabel = isAdmin ? "Admin Dashboard" : "Company Dashboard";
+  const DashboardIcon = isAdmin ? ShieldCheck : LayoutDashboard;
+
+  const initials = profile?.full_name
+    ? profile.full_name.split(" ").map((n: string) => n[0]).join("").toUpperCase().slice(0, 2)
+    : "U";
+
   return (
-    <header className="sticky top-0 z-50 w-full border-b bg-card/95 backdrop-blur-md">
+    <header
+      className={cn(
+        "sticky top-0 z-50 w-full border-b bg-card/95 backdrop-blur-md transition-shadow",
+        scrolled && "shadow-sm"
+      )}
+    >
       <div className="container-padded">
         <div className="flex h-14 items-center justify-between sm:h-16">
+
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2">
             <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary sm:h-9 sm:w-9">
               <span className="text-sm font-bold text-primary-foreground sm:text-lg">SL</span>
             </div>
-            <span className="text-lg font-bold text-foreground sm:text-xl">ServiceLink</span>
+            <span className="text-lg font-bold text-foreground sm:text-xl">
+              ServiceLink
+            </span>
           </Link>
 
           {/* Desktop Navigation */}
           <nav className="hidden items-center gap-1 md:flex">
-            {navLinks.map((link) => (
-              <Link
-                key={link.href}
-                to={link.href}
-                className={cn(
-                  "rounded-md px-3 py-2 text-sm font-medium transition-colors",
-                  location.pathname === link.href
-                    ? "bg-primary/10 text-primary"
-                    : "text-muted-foreground hover:text-foreground hover:bg-secondary"
-                )}
-              >
-                {link.label}
-              </Link>
-            ))}
+            {navLinks.map((link) => {
+              const isActive = location.pathname === link.href || (link.href !== "/" && location.pathname.startsWith(link.href));
+              return (
+                <Link
+                  key={link.href}
+                  to={link.href}
+                  className={cn(
+                    "relative rounded-md px-3 py-2 text-sm font-medium transition-colors",
+                    isActive
+                      ? "text-primary"
+                      : "text-muted-foreground hover:text-foreground hover:bg-secondary"
+                  )}
+                >
+                  {link.label}
+                  {isActive && (
+                    <span className="absolute bottom-0 left-1/2 h-0.5 w-4 -translate-x-1/2 rounded-full bg-primary" />
+                  )}
+                </Link>
+              );
+            })}
           </nav>
 
           {/* Desktop Actions */}
@@ -63,58 +98,79 @@ export function Header() {
               </Button>
             </Link>
             <ThemeToggle />
+
             {user ? (
-              <>
+              <div className="flex items-center gap-2">
+                {/* Dashboard quick-access button */}
+                <Link to={dashboardHref}>
+                  <Button variant="outline" size="sm" className="gap-1.5">
+                    <DashboardIcon className="h-4 w-4" />
+                    {isAdmin ? "Admin" : "Dashboard"}
+                  </Button>
+                </Link>
+
+                {/* User avatar dropdown */}
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" size="sm" className="gap-2">
-                      <User className="h-4 w-4" />
-                      <span className="max-w-[120px] truncate">{profile?.full_name || "Account"}</span>
+                    <Button variant="ghost" size="sm" className="gap-1.5 px-1.5">
+                      <Avatar className="h-7 w-7">
+                        <AvatarFallback className="text-xs bg-primary/10 text-primary">
+                          {initials}
+                        </AvatarFallback>
+                      </Avatar>
+                      <ChevronDown className="h-3.5 w-3.5 text-muted-foreground" />
                     </Button>
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end" className="w-48">
+                  <DropdownMenuContent align="end" className="w-52">
+                    <div className="px-3 py-2">
+                      <p className="text-sm font-medium text-foreground truncate">{profile?.full_name || "Account"}</p>
+                      <p className="text-xs text-muted-foreground truncate">{profile?.email}</p>
+                    </div>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem asChild>
+                      <Link to={dashboardHref} className="flex items-center gap-2">
+                        <DashboardIcon className="h-4 w-4" />
+                        {dashboardLabel}
+                      </Link>
+                    </DropdownMenuItem>
                     {isProvider && !isAdmin && (
                       <DropdownMenuItem asChild>
-                        <Link to="/dashboard" className="flex items-center gap-2">
-                          <Settings className="h-4 w-4" /> Dashboard
-                        </Link>
-                      </DropdownMenuItem>
-                    )}
-                    {isAdmin && (
-                      <DropdownMenuItem asChild>
-                        <Link to="/admin" className="flex items-center gap-2">
-                          <Settings className="h-4 w-4" /> Admin Panel
+                        <Link to="/dashboard/services/add" className="flex items-center gap-2">
+                          <Plus className="h-4 w-4" />
+                          Post a Service
                         </Link>
                       </DropdownMenuItem>
                     )}
                     <DropdownMenuSeparator />
                     <DropdownMenuItem onClick={signOut} className="flex items-center gap-2">
-                      <LogOut className="h-4 w-4" /> Sign Out
+                      <LogOut className="h-4 w-4" />
+                      Sign Out
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
-                {isProvider && !isAdmin && (
-                  <Link to="/dashboard/services/add">
-                    <Button size="sm" className="gap-1.5">
-                      <Plus className="h-4 w-4" /> Post Service
-                    </Button>
-                  </Link>
-                )}
-              </>
+              </div>
             ) : (
-              <>
-                <Link to="/login"><Button variant="ghost" size="sm">Sign In</Button></Link>
-                <Link to="/register"><Button size="sm">Get Started</Button></Link>
-              </>
+              <div className="flex items-center gap-1.5">
+                <Link to="/login">
+                  <Button variant="ghost" size="sm">
+                    Sign In
+                  </Button>
+                </Link>
+                <Link to="/register">
+                  <Button size="sm">
+                    Get Started
+                  </Button>
+                </Link>
+              </div>
             )}
           </div>
 
-          {/* Mobile */}
+          {/* Mobile right side */}
           <div className="flex items-center gap-1 md:hidden">
             <ThemeToggle />
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="flex h-10 w-10 items-center justify-center rounded-lg text-muted-foreground hover:bg-secondary"
+              className="flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground hover:bg-secondary transition-colors"
               aria-label="Toggle menu"
             >
               {isMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
@@ -127,50 +183,68 @@ export function Header() {
       {isMenuOpen && (
         <div className="border-t bg-card md:hidden animate-slide-up">
           <div className="container-padded py-3">
+            {/* User info banner if logged in */}
+            {user && (
+              <div className="mb-3 flex items-center gap-3 rounded-lg bg-secondary/50 p-3">
+                <Avatar className="h-9 w-9">
+                  <AvatarFallback className="text-xs bg-primary/10 text-primary">
+                    {initials}
+                  </AvatarFallback>
+                </Avatar>
+                <div className="min-w-0">
+                  <p className="text-sm font-medium text-foreground truncate">{profile?.full_name || "Account"}</p>
+                  <p className="text-xs text-muted-foreground truncate">{profile?.email}</p>
+                </div>
+              </div>
+            )}
+
             <nav className="flex flex-col gap-1">
-              {navLinks.map((link) => (
-                <Link
-                  key={link.href}
-                  to={link.href}
-                  onClick={() => setIsMenuOpen(false)}
-                  className={cn(
-                    "rounded-lg px-4 py-2.5 text-sm font-medium transition-colors",
-                    location.pathname === link.href
-                      ? "bg-primary/10 text-primary"
-                      : "text-foreground hover:bg-secondary"
-                  )}
-                >
-                  {link.label}
-                </Link>
-              ))}
+              {navLinks.map((link) => {
+                const isActive = location.pathname === link.href;
+                return (
+                  <Link
+                    key={link.href}
+                    to={link.href}
+                    className={cn(
+                      "rounded-lg px-4 py-2.5 text-sm font-medium transition-colors",
+                      isActive
+                        ? "bg-primary/10 text-primary"
+                        : "text-foreground hover:bg-secondary"
+                    )}
+                  >
+                    {link.label}
+                  </Link>
+                );
+              })}
+
               <hr className="my-2 border-border" />
+
               {user ? (
                 <>
+                  <Link to={dashboardHref} className="flex items-center gap-3 rounded-lg px-4 py-2.5 text-sm font-medium text-foreground hover:bg-secondary">
+                    <DashboardIcon className="h-4 w-4" />
+                    {dashboardLabel}
+                  </Link>
                   {isProvider && !isAdmin && (
-                    <Link to="/dashboard" onClick={() => setIsMenuOpen(false)} className="rounded-lg px-4 py-2.5 text-sm font-medium text-foreground hover:bg-secondary">
-                      Dashboard
+                    <Link to="/dashboard/services/add" className="flex items-center gap-3 rounded-lg px-4 py-2.5 text-sm font-medium text-foreground hover:bg-secondary">
+                      <Plus className="h-4 w-4" />
+                      Post a Service
                     </Link>
                   )}
-                  {isAdmin && (
-                    <Link to="/admin" onClick={() => setIsMenuOpen(false)} className="rounded-lg px-4 py-2.5 text-sm font-medium text-foreground hover:bg-secondary">
-                      Admin Panel
-                    </Link>
-                  )}
-                  <button onClick={() => { signOut(); setIsMenuOpen(false); }} className="rounded-lg px-4 py-2.5 text-left text-sm font-medium text-foreground hover:bg-secondary">
+                  <button
+                    onClick={() => { signOut(); setIsMenuOpen(false); }}
+                    className="flex items-center gap-3 rounded-lg px-4 py-2.5 text-left text-sm font-medium text-destructive hover:bg-destructive/5"
+                  >
+                    <LogOut className="h-4 w-4" />
                     Sign Out
                   </button>
-                  {isProvider && !isAdmin && (
-                    <Link to="/dashboard/services/add" onClick={() => setIsMenuOpen(false)}>
-                      <Button className="mt-1 w-full gap-2"><Plus className="h-4 w-4" />Post Service</Button>
-                    </Link>
-                  )}
                 </>
               ) : (
                 <>
-                  <Link to="/login" onClick={() => setIsMenuOpen(false)} className="rounded-lg px-4 py-2.5 text-sm font-medium text-foreground hover:bg-secondary">
+                  <Link to="/login" className="rounded-lg px-4 py-2.5 text-sm font-medium text-foreground hover:bg-secondary">
                     Sign In
                   </Link>
-                  <Link to="/register" onClick={() => setIsMenuOpen(false)}>
+                  <Link to="/register">
                     <Button className="mt-1 w-full">Get Started</Button>
                   </Link>
                 </>

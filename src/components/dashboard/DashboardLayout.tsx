@@ -29,10 +29,13 @@ export function DashboardLayout({ children, title, description }: DashboardLayou
       <header className="sticky top-0 z-50 border-b bg-card/95 backdrop-blur-md">
         <div className="container-padded flex h-14 items-center justify-between sm:h-16">
           <div className="flex items-center gap-2 sm:gap-4">
-            <Link to="/" className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-primary transition-colors">
+            <button
+              onClick={() => navigate(-1)}
+              className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-primary transition-colors"
+            >
               <ChevronLeft className="h-4 w-4" />
               <span className="hidden sm:inline">Back</span>
-            </Link>
+            </button>
             <div className="h-5 w-px bg-border sm:h-6" />
             <Link to="/dashboard" className="flex items-center gap-2">
               <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-primary sm:h-8 sm:w-8">

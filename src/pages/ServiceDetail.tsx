@@ -99,10 +99,13 @@ const ServiceDetail = () => {
       {/* Breadcrumb */}
       <div className="border-b bg-card">
         <div className="container-padded py-3 sm:py-4">
-          <Link to="/services" className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-primary transition-colors">
+          <button
+            onClick={() => navigate(-1)}
+            className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-primary transition-colors"
+          >
             <ChevronLeft className="h-4 w-4" />
-            Back to Services
-          </Link>
+            Back
+          </button>
         </div>
       </div>
 
