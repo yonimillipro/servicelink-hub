@@ -20,6 +20,7 @@ const navItems = [
 
 export function DashboardLayout({ children, title, description }: DashboardLayoutProps) {
   const location = useLocation();
+  const navigate = useNavigate();
   const { profile, signOut } = useAuth();
 
   return (
