@@ -71,7 +71,7 @@ function slugify(text: string) {
 }
 
 export default function AdminCategories() {
-  const { data: categories, isLoading } = useCategories();
+  const { data: categories, isLoading } = useCategoriesWithLiveCount();
   const createCategory = useCreateCategory();
   const updateCategory = useUpdateCategory();
   const deleteCategory = useDeleteCategory();
