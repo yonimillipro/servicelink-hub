@@ -22,6 +22,7 @@ const inquirySchema = z.object({
 
 const ServiceDetail = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
   const { data: service, isLoading } = useServiceById(id);
   const createInquiry = useCreateInquiry();
   const { user } = useAuth();
