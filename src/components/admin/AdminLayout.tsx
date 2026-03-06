@@ -20,6 +20,7 @@ const navItems = [
 
 export function AdminLayout({ children, title, description }: AdminLayoutProps) {
   const location = useLocation();
+  const navigate = useNavigate();
   const { profile, signOut } = useAuth();
 
   return (
