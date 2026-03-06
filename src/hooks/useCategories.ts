@@ -140,3 +140,44 @@ export function useCategoriesWithCount() {
     },
   });
 }
+
+export interface CategoryWithLiveCount {
+  id: string;
+  name: string;
+  slug: string;
+  description: string | null;
+  icon: string | null;
+  service_count: number;
+  created_at: string;
+  updated_at: string;
+}
+
+export function useCategoriesWithLiveCount() {
+  return useQuery({
+    queryKey: ["categories-with-live-count"],
+    queryFn: async (): Promise<CategoryWithLiveCount[]> => {
+      const { data: categories, error: catError } = await supabase
+        .from("categories")
+        .select("*")
+        .order("name");
+      if (catError) throw catError;
+
+      const { data: services, error: svcError } = await supabase
+        .from("services")
+        .select("category_id");
+      if (svcError) throw svcError;
+
+      const countMap: Record<string, number> = {};
+      for (const row of services || []) {
+        if (row.category_id) {
+          countMap[row.category_id] = (countMap[row.category_id] || 0) + 1;
+        }
+      }
+
+      return (categories || []).map((cat) => ({
+        ...cat,
+        service_count: countMap[cat.id] || 0,
+      }));
+    },
+  });
+}
