@@ -1,4 +1,4 @@
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import { Layout } from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
 import { ServiceCard } from "@/components/service/ServiceCard";
@@ -9,6 +9,7 @@ import { MapPin, Star, Phone, Mail, Calendar, CheckCircle2, ChevronLeft, Share2 
 
 const CompanyProfile = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
   const { data: company, isLoading: companyLoading } = useCompanyById(id);
   const { data: companyResult, isLoading: servicesLoading } = useServices({ companyId: id });
   const companyServices = companyResult?.data;
@@ -41,10 +42,13 @@ const CompanyProfile = () => {
     <Layout>
       <div className="border-b bg-card">
         <div className="container-padded py-4">
-          <Link to="/services" className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-primary">
+          <button
+            onClick={() => navigate(-1)}
+            className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors"
+          >
             <ChevronLeft className="h-4 w-4" />
-            Back to Services
-          </Link>
+            Back
+          </button>
         </div>
       </div>
 

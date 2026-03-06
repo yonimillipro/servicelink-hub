@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import { Layout } from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -22,6 +22,7 @@ const inquirySchema = z.object({
 
 const ServiceDetail = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
   const { data: service, isLoading } = useServiceById(id);
   const createInquiry = useCreateInquiry();
   const { user } = useAuth();
@@ -98,10 +99,13 @@ const ServiceDetail = () => {
       {/* Breadcrumb */}
       <div className="border-b bg-card">
         <div className="container-padded py-3 sm:py-4">
-          <Link to="/services" className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-primary transition-colors">
+          <button
+            onClick={() => navigate(-1)}
+            className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-primary transition-colors"
+          >
             <ChevronLeft className="h-4 w-4" />
-            Back to Services
-          </Link>
+            Back
+          </button>
         </div>
       </div>
 

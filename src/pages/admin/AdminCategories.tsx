@@ -151,13 +151,13 @@ export default function AdminCategories() {
       </div>
 
       {isLoading ? (
-        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 sm:gap-4">
+        <div className="grid gap-3 grid-cols-1 sm:grid-cols-2 sm:gap-4">
           {Array.from({ length: 9 }).map((_, i) => (
             <Skeleton key={i} className="h-20 rounded-xl sm:h-24" />
           ))}
         </div>
       ) : categories && categories.length > 0 ? (
-        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 sm:gap-4">
+        <div className="grid gap-3 grid-cols-1 sm:grid-cols-2 sm:gap-4">
           {categories.map((category) => {
             const IconComponent = category.icon
               ? iconMap[category.icon] || Folder
