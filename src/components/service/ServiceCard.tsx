@@ -30,6 +30,7 @@ export function ServiceCard({ service, className }: ServiceCardProps) {
       to={`/services/${service.id}`}
       className={cn(
         "group relative block overflow-hidden rounded-xl bg-card card-hover",
+        service.is_featured && "ring-1 ring-primary/30 shadow-[0_0_12px_-3px_hsl(var(--primary)/0.2)]",
         className
       )}
     >

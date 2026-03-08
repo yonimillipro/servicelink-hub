@@ -50,15 +50,34 @@ const Services = () => {
     );
   }
 
-  // Client-side sorting
+  // Sort featured first, then apply user sort
+  services = [...services].sort((a, b) => {
+    // Featured always first
+    if (a.is_featured && !b.is_featured) return -1;
+    if (!a.is_featured && b.is_featured) return 1;
+    return 0;
+  });
+
   if (sortBy === "newest") {
-    services = [...services].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+    services.sort((a, b) => {
+      if (a.is_featured !== b.is_featured) return a.is_featured ? -1 : 1;
+      return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+    });
   } else if (sortBy === "oldest") {
-    services = [...services].sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime());
+    services.sort((a, b) => {
+      if (a.is_featured !== b.is_featured) return a.is_featured ? -1 : 1;
+      return new Date(a.created_at).getTime() - new Date(b.created_at).getTime();
+    });
   } else if (sortBy === "price-low") {
-    services = [...services].sort((a, b) => (a.price ?? 0) - (b.price ?? 0));
+    services.sort((a, b) => {
+      if (a.is_featured !== b.is_featured) return a.is_featured ? -1 : 1;
+      return (a.price ?? 0) - (b.price ?? 0);
+    });
   } else if (sortBy === "price-high") {
-    services = [...services].sort((a, b) => (b.price ?? 0) - (a.price ?? 0));
+    services.sort((a, b) => {
+      if (a.is_featured !== b.is_featured) return a.is_featured ? -1 : 1;
+      return (b.price ?? 0) - (a.price ?? 0);
+    });
   }
 
   const totalPages = result?.totalPages ?? 1;
