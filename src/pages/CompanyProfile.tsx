@@ -121,19 +121,23 @@ const CompanyProfile = () => {
             <h3 className="text-foreground">Services ({companyServices?.length || 0})</h3>
             {servicesLoading ? (
               <div className="mt-6 grid gap-6 sm:grid-cols-2">
-                {Array.from({ length: 2 }).map((_, i) => (
-                  <Skeleton key={i} className="h-80" />
-                ))}
+                {Array.from({ length: 2 }).map((_, i) => <ServiceCardSkeleton key={i} />)}
               </div>
             ) : companyServices && companyServices.length > 0 ? (
-              <div className="mt-6 grid gap-6 sm:grid-cols-2">
+              <StaggerGrid className="mt-6 grid gap-6 sm:grid-cols-2">
                 {companyServices.map((service) => (
-                  <ServiceCard key={service.id} service={service} />
+                  <MotionCard key={service.id}>
+                    <ServiceCard service={service} />
+                  </MotionCard>
                 ))}
-              </div>
+              </StaggerGrid>
             ) : (
-              <div className="mt-6 rounded-xl bg-secondary/50 py-12 text-center">
-                <p className="text-muted-foreground">No services listed yet.</p>
+              <div className="mt-6">
+                <EmptyState
+                  icon={PackageOpen}
+                  title="No services listed yet"
+                  description="This provider hasn't added any services."
+                />
               </div>
             )}
           </div>
