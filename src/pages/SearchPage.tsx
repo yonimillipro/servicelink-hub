@@ -2,9 +2,11 @@ import { useSearchParams } from "react-router-dom";
 import { Layout } from "@/components/layout/Layout";
 import { SearchBar } from "@/components/search/SearchBar";
 import { ServiceCard } from "@/components/service/ServiceCard";
-import { Skeleton } from "@/components/ui/skeleton";
+import { ServiceCardSkeleton } from "@/components/service/ServiceCardSkeleton";
+import { EmptyState } from "@/components/ui/empty-state";
+import { StaggerGrid, MotionCard, motion } from "@/components/ui/motion";
 import { useSearchServices } from "@/hooks/useServices";
-import { Search } from "lucide-react";
+import { Search, SearchX } from "lucide-react";
 
 export default function SearchPage() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -42,14 +44,20 @@ export default function SearchPage() {
       <section className="py-6 sm:py-8">
         <div className="container-padded">
           {!hasSearched ? (
-            <div className="py-16 text-center sm:py-20">
-              <Search className="mx-auto h-12 w-12 text-muted-foreground/30 sm:h-16 sm:w-16" />
-              <p className="mt-3 text-base text-muted-foreground sm:text-lg">Enter a search term to find services</p>
-            </div>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="py-16 text-center sm:py-20"
+            >
+              <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-muted">
+                <Search className="h-8 w-8 text-muted-foreground/50" />
+              </div>
+              <p className="mt-4 text-base text-muted-foreground sm:text-lg">Enter a search term to find services</p>
+            </motion.div>
           ) : isLoading ? (
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 sm:gap-6">
               {Array.from({ length: 6 }).map((_, i) => (
-                <Skeleton key={i} className="h-72 rounded-xl sm:h-80" />
+                <ServiceCardSkeleton key={i} />
               ))}
             </div>
           ) : services && services.length > 0 ? (
@@ -57,17 +65,20 @@ export default function SearchPage() {
               <p className="mb-4 text-xs text-muted-foreground sm:text-sm">
                 {totalCount} result{totalCount !== 1 ? "s" : ""} found
               </p>
-              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 sm:gap-6">
+              <StaggerGrid className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 sm:gap-6">
                 {services.map((service) => (
-                  <ServiceCard key={service.id} service={service} />
+                  <MotionCard key={service.id}>
+                    <ServiceCard service={service} />
+                  </MotionCard>
                 ))}
-              </div>
+              </StaggerGrid>
             </>
           ) : (
-            <div className="py-16 text-center sm:py-20">
-              <Search className="mx-auto h-10 w-10 text-muted-foreground/30" />
-              <p className="mt-3 text-muted-foreground">No services found. Try another search.</p>
-            </div>
+            <EmptyState
+              icon={SearchX}
+              title="No services found"
+              description="Try another keyword or adjust your location filter."
+            />
           )}
         </div>
       </section>

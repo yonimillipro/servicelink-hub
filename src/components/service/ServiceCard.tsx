@@ -6,6 +6,7 @@ import { useReviewStats } from "@/hooks/useReviews";
 import { useSavedServices, useToggleSave } from "@/hooks/useSavedServices";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
+import { motion, AnimatePresence } from "framer-motion";
 
 interface ServiceCardProps {
   service: ServiceWithRelations;
@@ -28,6 +29,7 @@ export function ServiceCard({ service, className }: ServiceCardProps) {
     }
     toggleSave.mutate({ serviceId: service.id, isSaved });
   };
+
   const formatPrice = (price: number | null, type: string | null) => {
     if (!price) return "Contact for price";
     const formatted = new Intl.NumberFormat("en-ET", {
@@ -60,7 +62,17 @@ export function ServiceCard({ service, className }: ServiceCardProps) {
           isSaved ? "text-red-500" : "text-muted-foreground hover:text-red-500"
         )}
       >
-        <Heart className={cn("h-4 w-4", isSaved && "fill-current")} />
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={isSaved ? "saved" : "unsaved"}
+            initial={{ scale: 0.5 }}
+            animate={{ scale: 1 }}
+            exit={{ scale: 0.5 }}
+            transition={{ duration: 0.15 }}
+          >
+            <Heart className={cn("h-4 w-4", isSaved && "fill-current")} />
+          </motion.div>
+        </AnimatePresence>
       </button>
 
       {service.is_featured && (
