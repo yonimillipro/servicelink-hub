@@ -9,6 +9,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useServiceById } from "@/hooks/useServices";
 import { useCreateInquiry } from "@/hooks/useInquiries";
 import { useAuth } from "@/hooks/useAuth";
+import { ReviewSection } from "@/components/review/ReviewSection";
 import { MapPin, ChevronLeft, CheckCircle2, Loader2, Mail } from "lucide-react";
 import { toast } from "sonner";
 import { z } from "zod";
