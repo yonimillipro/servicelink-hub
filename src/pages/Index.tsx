@@ -2,6 +2,7 @@ import { Layout } from "@/components/layout/Layout";
 import { SearchBar } from "@/components/search/SearchBar";
 import { ServiceCard } from "@/components/service/ServiceCard";
 import { ServiceCardSkeleton } from "@/components/service/ServiceCardSkeleton";
+import { FeaturedCarousel } from "@/components/service/FeaturedCarousel";
 import { CategoryCard } from "@/components/category/CategoryCard";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
