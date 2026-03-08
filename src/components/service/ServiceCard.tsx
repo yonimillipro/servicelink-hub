@@ -1,8 +1,11 @@
 import { Link } from "react-router-dom";
-import { MapPin, Star, Clock, CheckCircle2 } from "lucide-react";
+import { MapPin, Star, Clock, CheckCircle2, Heart } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { ServiceWithRelations } from "@/hooks/useServices";
 import { useReviewStats } from "@/hooks/useReviews";
+import { useSavedServices, useToggleSave } from "@/hooks/useSavedServices";
+import { useAuth } from "@/hooks/useAuth";
+import { toast } from "sonner";
 
 interface ServiceCardProps {
   service: ServiceWithRelations;
@@ -11,6 +14,20 @@ interface ServiceCardProps {
 
 export function ServiceCard({ service, className }: ServiceCardProps) {
   const { data: stats } = useReviewStats(service.id);
+  const { user } = useAuth();
+  const { data: savedIds } = useSavedServices();
+  const toggleSave = useToggleSave();
+  const isSaved = savedIds?.includes(service.id) ?? false;
+
+  const handleToggleSave = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (!user) {
+      toast.error("Sign in to save services");
+      return;
+    }
+    toggleSave.mutate({ serviceId: service.id, isSaved });
+  };
   const formatPrice = (price: number | null, type: string | null) => {
     if (!price) return "Contact for price";
     const formatted = new Intl.NumberFormat("en-ET", {
