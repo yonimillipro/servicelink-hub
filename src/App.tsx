@@ -80,6 +80,13 @@ const App = () => (
               <Route path="/register" element={<Auth />} />
               <Route path="/forgot-password" element={<Auth />} />
 
+              {/* Saved Services (any logged-in user) */}
+              <Route path="/saved" element={
+                <ProtectedRoute>
+                  <SavedServices />
+                </ProtectedRoute>
+              } />
+
               {/* Provider Dashboard Routes */}
               <Route path="/dashboard" element={
                 <ProtectedRoute requireProvider>
