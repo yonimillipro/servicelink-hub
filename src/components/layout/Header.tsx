@@ -41,9 +41,6 @@ export function Header() {
     setIsMenuOpen(false);
   }, [location.pathname]);
 
-  const dashboardHref = isAdmin ? "/admin" : "/dashboard";
-  const dashboardLabel = isAdmin ? "Admin Dashboard" : "Company Dashboard";
-  const DashboardIcon = isAdmin ? ShieldCheck : LayoutDashboard;
 
   const initials = profile?.full_name
     ? profile.full_name.split(" ").map((n: string) => n[0]).join("").toUpperCase().slice(0, 2)
