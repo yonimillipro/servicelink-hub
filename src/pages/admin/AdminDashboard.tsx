@@ -1,6 +1,8 @@
 import { AdminLayout } from "@/components/admin/AdminLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
+import { AnimatedCounter } from "@/components/ui/animated-counter";
+import { motion } from "@/components/ui/motion";
 import { useServices } from "@/hooks/useServices";
 import { useAllCompanies } from "@/hooks/useCompanies";
 import { useCategories } from "@/hooks/useCategories";
@@ -14,78 +16,44 @@ export default function AdminDashboard() {
   const { data: companies, isLoading: companiesLoading } = useAllCompanies();
   const { data: categories, isLoading: categoriesLoading } = useCategories();
 
+  const statCards = [
+    { title: "Pending Approval", value: pendingResult?.count ?? 0, icon: Clock, color: "text-yellow-600", loading: pendingLoading },
+    { title: "Total Services", value: totalServicesCount, icon: Package, color: "text-primary", loading: servicesLoading },
+    { title: "Companies", value: companies?.length || 0, icon: Building2, color: "text-foreground", loading: companiesLoading },
+    { title: "Categories", value: categories?.length || 0, icon: Folder, color: "text-foreground", loading: categoriesLoading },
+  ];
+
   return (
     <AdminLayout title="Admin Dashboard" description="Overview of the platform">
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">
-              Pending Approval
-            </CardTitle>
-            <Clock className="h-4 w-4 text-yellow-500" />
-          </CardHeader>
-          <CardContent>
-            {pendingLoading ? (
-              <Skeleton className="h-8 w-16" />
-            ) : (
-              <div className="text-2xl font-bold text-yellow-600">
-                {pendingResult?.count ?? 0}
-              </div>
-            )}
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">
-              Total Services
-            </CardTitle>
-            <Package className="h-4 w-4 text-primary" />
-          </CardHeader>
-          <CardContent>
-            {servicesLoading ? (
-              <Skeleton className="h-8 w-16" />
-            ) : (
-              <div className="text-2xl font-bold">{totalServicesCount}</div>
-            )}
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">
-              Companies
-            </CardTitle>
-            <Building2 className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            {companiesLoading ? (
-              <Skeleton className="h-8 w-16" />
-            ) : (
-              <div className="text-2xl font-bold">{companies?.length || 0}</div>
-            )}
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">
-              Categories
-            </CardTitle>
-            <Folder className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            {categoriesLoading ? (
-              <Skeleton className="h-8 w-16" />
-            ) : (
-              <div className="text-2xl font-bold">{categories?.length || 0}</div>
-            )}
-          </CardContent>
-        </Card>
+        {statCards.map((stat, i) => (
+          <motion.div
+            key={stat.title}
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.2, delay: i * 0.05 }}
+          >
+            <Card className="transition-shadow hover:shadow-md">
+              <CardHeader className="flex flex-row items-center justify-between pb-2">
+                <CardTitle className="text-sm font-medium text-muted-foreground">{stat.title}</CardTitle>
+                <stat.icon className={`h-4 w-4 ${stat.color === "text-foreground" ? "text-muted-foreground" : stat.color}`} />
+              </CardHeader>
+              <CardContent>
+                {stat.loading ? (
+                  <Skeleton className="h-8 w-16" />
+                ) : (
+                  <div className={`text-2xl font-bold ${stat.color}`}>
+                    <AnimatedCounter value={stat.value} />
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </motion.div>
+        ))}
       </div>
 
       {/* Pending Services Preview */}
-      <Card className="mt-6">
+      <Card className="mt-6 transition-shadow hover:shadow-md">
         <CardHeader>
           <CardTitle>Services Pending Review</CardTitle>
         </CardHeader>
@@ -98,9 +66,12 @@ export default function AdminDashboard() {
             </div>
           ) : pendingServices && pendingServices.length > 0 ? (
             <div className="space-y-2">
-              {pendingServices.slice(0, 5).map((service) => (
-                <div
+              {pendingServices.slice(0, 5).map((service, i) => (
+                <motion.div
                   key={service.id}
+                  initial={{ opacity: 0, x: -10 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.2, delay: i * 0.04 }}
                   className="flex items-center justify-between rounded-lg bg-secondary p-3"
                 >
                   <div>
@@ -112,7 +83,7 @@ export default function AdminDashboard() {
                   <span className="text-xs text-muted-foreground">
                     {new Date(service.created_at).toLocaleDateString()}
                   </span>
-                </div>
+                </motion.div>
               ))}
             </div>
           ) : (
