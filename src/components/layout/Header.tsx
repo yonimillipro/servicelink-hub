@@ -249,6 +249,10 @@ export function Header() {
 
               {user ? (
                 <>
+                  <Link to="/profile" className="flex items-center gap-3 rounded-lg px-4 py-2.5 text-sm font-medium text-foreground hover:bg-secondary">
+                    <UserCircle className="h-4 w-4" />
+                    Profile
+                  </Link>
                   <Link to="/saved" className="flex items-center gap-3 rounded-lg px-4 py-2.5 text-sm font-medium text-foreground hover:bg-secondary">
                     <Heart className="h-4 w-4" />
                     Saved Services
