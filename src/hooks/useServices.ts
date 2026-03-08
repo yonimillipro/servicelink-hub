@@ -20,7 +20,7 @@ export interface ServiceWithRelations extends Service {
 interface UseServicesOptions {
   categorySlug?: string;
   featured?: boolean;
-  status?: string;
+  status?: string | null;
   limit?: number;
   companyId?: string;
   page?: number;
@@ -37,6 +37,7 @@ export interface PaginatedServices {
 
 export function useServices(options: UseServicesOptions = {}) {
   const { categorySlug, featured, status = "approved", limit, companyId, page = 1, pageSize = 12 } = options;
+  const statusFilter = status === undefined ? "approved" : status;
 
   return useQuery({
     queryKey: ["services", options],
@@ -64,8 +65,8 @@ export function useServices(options: UseServicesOptions = {}) {
         `, { count: "exact" })
         .order("created_at", { ascending: false });
 
-      if (status) {
-        query = query.eq("status", status);
+      if (statusFilter) {
+        query = query.eq("status", statusFilter);
       }
 
       if (categoryId) {

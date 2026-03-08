@@ -9,8 +9,8 @@ import { Package, Building2, Folder, Clock } from "lucide-react";
 export default function AdminDashboard() {
   const { data: pendingResult, isLoading: pendingLoading } = useServices({ status: "pending" });
   const pendingServices = pendingResult?.data;
-  const { data: allResult, isLoading: servicesLoading } = useServices({ status: undefined });
-  const allServices = allResult?.data;
+  const { data: allResult, isLoading: servicesLoading } = useServices({ status: null });
+  const totalServicesCount = allResult?.count ?? 0;
   const { data: companies, isLoading: companiesLoading } = useAllCompanies();
   const { data: categories, isLoading: categoriesLoading } = useCategories();
 
@@ -29,7 +29,7 @@ export default function AdminDashboard() {
               <Skeleton className="h-8 w-16" />
             ) : (
               <div className="text-2xl font-bold text-yellow-600">
-                {pendingServices?.length || 0}
+                {pendingResult?.count ?? 0}
               </div>
             )}
           </CardContent>
@@ -46,7 +46,7 @@ export default function AdminDashboard() {
             {servicesLoading ? (
               <Skeleton className="h-8 w-16" />
             ) : (
-              <div className="text-2xl font-bold">{allServices?.length || 0}</div>
+              <div className="text-2xl font-bold">{totalServicesCount}</div>
             )}
           </CardContent>
         </Card>
