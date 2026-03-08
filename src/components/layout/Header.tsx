@@ -264,22 +264,34 @@ export function Header() {
               <hr className="my-2 border-border" />
 
               {user ? (
-                <>
-                  <Link to="/profile" className="flex items-center gap-3 rounded-lg px-4 py-2.5 text-sm font-medium text-foreground hover:bg-secondary">
-                    <UserCircle className="h-4 w-4" />
-                    Profile
-                  </Link>
-                  <Link to="/saved" className="flex items-center gap-3 rounded-lg px-4 py-2.5 text-sm font-medium text-foreground hover:bg-secondary">
-                    <Heart className="h-4 w-4" />
-                    Saved Services
-                  </Link>
-                  <button
-                    onClick={() => { signOut(); setIsMenuOpen(false); }}
-                    className="flex items-center gap-3 rounded-lg px-4 py-2.5 text-left text-sm font-medium text-destructive hover:bg-destructive/5"
-                  >
-                    <LogOut className="h-4 w-4" />
-                    Sign Out
-                  </button>
+                  <>
+                   {isAdmin && (
+                     <Link to="/admin" className="flex items-center gap-3 rounded-lg px-4 py-2.5 text-sm font-medium text-foreground hover:bg-secondary">
+                       <ShieldCheck className="h-4 w-4" />
+                       Admin Dashboard
+                     </Link>
+                   )}
+                   {isProvider && !isAdmin && (
+                     <Link to="/dashboard" className="flex items-center gap-3 rounded-lg px-4 py-2.5 text-sm font-medium text-foreground hover:bg-secondary">
+                       <LayoutDashboard className="h-4 w-4" />
+                       Company Dashboard
+                     </Link>
+                   )}
+                   <Link to="/profile" className="flex items-center gap-3 rounded-lg px-4 py-2.5 text-sm font-medium text-foreground hover:bg-secondary">
+                     <UserCircle className="h-4 w-4" />
+                     Profile
+                   </Link>
+                   <Link to="/saved" className="flex items-center gap-3 rounded-lg px-4 py-2.5 text-sm font-medium text-foreground hover:bg-secondary">
+                     <Heart className="h-4 w-4" />
+                     Saved Services
+                   </Link>
+                   <button
+                     onClick={() => { signOut(); setIsMenuOpen(false); }}
+                     className="flex items-center gap-3 rounded-lg px-4 py-2.5 text-left text-sm font-medium text-destructive hover:bg-destructive/5"
+                   >
+                     <LogOut className="h-4 w-4" />
+                     Sign Out
+                   </button>
                 </>
               ) : (
                 <>
