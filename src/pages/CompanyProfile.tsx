@@ -20,8 +20,19 @@ const CompanyProfile = () => {
   if (companyLoading) {
     return (
       <Layout>
-        <div className="container-padded py-12">
-          <Skeleton className="h-32 w-full" />
+        <div className="container-padded py-12 space-y-6">
+          <Skeleton className="h-5 w-16" />
+          <div className="flex flex-col items-start gap-6 md:flex-row md:items-center">
+            <Skeleton className="h-24 w-24 rounded-2xl md:h-32 md:w-32" />
+            <div className="flex-1 space-y-3">
+              <Skeleton className="h-8 w-48" />
+              <Skeleton className="h-4 w-full max-w-md" />
+              <Skeleton className="h-4 w-32" />
+            </div>
+          </div>
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 mt-8">
+            {Array.from({ length: 2 }).map((_, i) => <ServiceCardSkeleton key={i} />)}
+          </div>
         </div>
       </Layout>
     );
