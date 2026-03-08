@@ -28,7 +28,7 @@ const overlayVariants = {
 
 const panelVariants = {
   hidden: { x: "100%" },
-  visible: { x: 0, transition: { type: "spring", damping: 30, stiffness: 300 } },
+  visible: { x: 0, transition: { type: "spring" as const, damping: 30, stiffness: 300 } },
   exit: { x: "100%", transition: { duration: 0.2 } },
 };
 
