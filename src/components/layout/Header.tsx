@@ -246,16 +246,6 @@ export function Header() {
 
               {user ? (
                 <>
-                  <Link to={dashboardHref} className="flex items-center gap-3 rounded-lg px-4 py-2.5 text-sm font-medium text-foreground hover:bg-secondary">
-                    <DashboardIcon className="h-4 w-4" />
-                    {dashboardLabel}
-                  </Link>
-                  {isProvider && !isAdmin && (
-                    <Link to="/dashboard/services/add" className="flex items-center gap-3 rounded-lg px-4 py-2.5 text-sm font-medium text-foreground hover:bg-secondary">
-                      <Plus className="h-4 w-4" />
-                      Post a Service
-                    </Link>
-                  )}
                   <Link to="/saved" className="flex items-center gap-3 rounded-lg px-4 py-2.5 text-sm font-medium text-foreground hover:bg-secondary">
                     <Heart className="h-4 w-4" />
                     Saved Services
