@@ -201,6 +201,35 @@ export type Database = {
           },
         ]
       }
+      saved_services: {
+        Row: {
+          created_at: string
+          id: string
+          service_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          service_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          service_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "saved_services_service_id_fkey"
+            columns: ["service_id"]
+            isOneToOne: false
+            referencedRelation: "services"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       service_images: {
         Row: {
           created_at: string
