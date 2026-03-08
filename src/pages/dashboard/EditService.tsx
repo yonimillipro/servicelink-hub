@@ -36,6 +36,7 @@ export default function EditService() {
     location: "",
     image: "",
   });
+  const [galleryImages, setGalleryImages] = useState<string[]>([]);
 
   useEffect(() => {
     if (service) {
