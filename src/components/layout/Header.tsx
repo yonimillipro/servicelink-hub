@@ -139,20 +139,6 @@ export function Header() {
                     </div>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem asChild>
-                      <Link to={dashboardHref} className="flex items-center gap-2">
-                        <DashboardIcon className="h-4 w-4" />
-                        {dashboardLabel}
-                      </Link>
-                    </DropdownMenuItem>
-                    {isProvider && !isAdmin && (
-                      <DropdownMenuItem asChild>
-                        <Link to="/dashboard/services/add" className="flex items-center gap-2">
-                          <Plus className="h-4 w-4" />
-                          Post a Service
-                        </Link>
-                      </DropdownMenuItem>
-                    )}
-                    <DropdownMenuItem asChild>
                       <Link to="/saved" className="flex items-center gap-2">
                         <Heart className="h-4 w-4" />
                         Saved Services
