@@ -45,6 +45,7 @@ export default function AddService() {
     location: "",
     image: "",
   });
+  const [galleryImages, setGalleryImages] = useState<string[]>([]);
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   const handleSubmit = async (e: React.FormEvent) => {
