@@ -4,11 +4,13 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useServices, useUpdateService } from "@/hooks/useServices";
 import { Check, X, Star, Eye } from "lucide-react";
 import { toast } from "sonner";
 import { Link } from "react-router-dom";
+import { Label } from "@/components/ui/label";
 
 export default function AdminServices() {
   const [activeTab, setActiveTab] = useState("pending");
