@@ -122,6 +122,24 @@ const ServiceDetail = () => {
         </div>
       </div>
 
+      <motion.div
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.3 }}
+        className="container-padded py-6 sm:py-8"
+      >
+      <div className="border-b bg-card">
+        <div className="container-padded py-3 sm:py-4">
+          <button
+            onClick={() => navigate(-1)}
+            className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-primary transition-colors"
+          >
+            <ChevronLeft className="h-4 w-4" />
+            Back
+          </button>
+        </div>
+      </div>
+
       <div className="container-padded py-6 sm:py-8">
         <div className="grid gap-6 lg:grid-cols-3 lg:gap-8">
           {/* Main Content */}
