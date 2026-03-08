@@ -74,17 +74,22 @@ export default function AddService() {
     }
 
     try {
-      await createService.mutateAsync({
+      const newService = await createService.mutateAsync({
         title: formData.title,
         description: formData.description,
         category_id: formData.categoryId,
         price_type: formData.priceType,
         price: formData.price ? parseFloat(formData.price) : null,
         location: formData.location || null,
-        image: formData.image || null,
+        image: formData.image || (galleryImages.length > 0 ? galleryImages[0] : null),
         company_id: company.id,
         status: "pending",
       });
+
+      // Save gallery images
+      for (const url of galleryImages) {
+        await addServiceImage.mutateAsync({ serviceId: newService.id, imageUrl: url });
+      }
 
       toast.success("Service submitted for review!");
       navigate("/dashboard/services");
