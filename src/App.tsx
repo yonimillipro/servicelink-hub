@@ -87,6 +87,11 @@ const App = () => (
                   <SavedServices />
                 </ProtectedRoute>
               } />
+              <Route path="/profile" element={
+                <ProtectedRoute>
+                  <Profile />
+                </ProtectedRoute>
+              } />
 
               {/* Provider Dashboard Routes */}
               <Route path="/dashboard" element={
