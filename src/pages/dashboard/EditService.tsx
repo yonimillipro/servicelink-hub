@@ -52,6 +52,12 @@ export default function EditService() {
     }
   }, [service]);
 
+  useEffect(() => {
+    if (existingImages) {
+      setGalleryImages(existingImages.map((img) => img.image_url));
+    }
+  }, [existingImages]);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
