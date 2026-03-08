@@ -20,7 +20,7 @@ export interface ServiceWithRelations extends Service {
 interface UseServicesOptions {
   categorySlug?: string;
   featured?: boolean;
-  status?: string;
+  status?: string | null;
   limit?: number;
   companyId?: string;
   page?: number;
