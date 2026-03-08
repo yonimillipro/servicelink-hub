@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { MapPin, Star, Clock } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { ServiceWithRelations } from "@/hooks/useServices";
+import { useReviewStats } from "@/hooks/useReviews";
 
 interface ServiceCardProps {
   service: ServiceWithRelations;
