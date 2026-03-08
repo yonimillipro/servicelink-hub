@@ -22,6 +22,18 @@ const stats = [
   { icon: Clock, label: "Quick Response", value: "< 2hrs" },
 ];
 
+const FeaturedSkeletons = () => (
+  <div className="flex gap-3 overflow-hidden sm:gap-4">
+    {Array.from({ length: 5 }).map((_, i) => (
+      <div key={i} className="w-[180px] flex-shrink-0 sm:w-[220px] lg:w-[260px]">
+        <Skeleton className="aspect-[4/3] w-full rounded-xl" />
+        <Skeleton className="mt-2 h-4 w-3/4 rounded" />
+        <Skeleton className="mt-1 h-3 w-1/2 rounded" />
+      </div>
+    ))}
+  </div>
+);
+
 const Index = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -31,6 +43,8 @@ const Index = () => {
   const featuredServices = featuredResult?.data;
   const { data: recentResult, isLoading: recentLoading } = useServices({ limit: 6 });
   const recentServices = recentResult?.data;
+
+  const hasFeatured = featuredLoading || (featuredServices && featuredServices.length > 0);
 
   const handleSearch = (query: string, location: string) => {
     const params = new URLSearchParams();
@@ -46,8 +60,32 @@ const Index = () => {
     toast({ title: "Provider Account Required", description: "Switch to a provider account to post services." });
   };
 
+  const FeaturedSection = () => (
+    <section className="bg-secondary/40 py-10 sm:py-12 md:py-16">
+      <div className="container-padded">
+        <div className="flex items-center justify-between">
+          <div>
+            <h2 className="text-foreground">Featured Services</h2>
+            <p className="mt-1 text-sm text-muted-foreground sm:text-base">Hand-picked services from top providers</p>
+          </div>
+          <Link to="/services?featured=true">
+            <Button variant="ghost" className="gap-1.5 text-sm">
+              View All <ArrowRight className="h-4 w-4" />
+            </Button>
+          </Link>
+        </div>
+        <div className="mt-6 sm:mt-8">
+          {featuredLoading ? <FeaturedSkeletons /> : <FeaturedCarousel services={featuredServices!} />}
+        </div>
+      </div>
+    </section>
+  );
+
   return (
     <Layout>
+      {/* Featured Services at top for signed-in users */}
+      {user && hasFeatured && <FeaturedSection />}
+
       {/* Hero */}
       <section className="hero-gradient relative overflow-hidden py-16 sm:py-20 md:py-28">
         <div className="container-padded relative z-10">
@@ -127,39 +165,8 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Featured Services */}
-      {(featuredLoading || (featuredServices && featuredServices.length > 0)) && (
-        <section className="bg-secondary/40 py-10 sm:py-12 md:py-16">
-          <div className="container-padded">
-            <div className="flex items-center justify-between">
-              <div>
-                <h2 className="text-foreground">Featured Services</h2>
-                <p className="mt-1 text-sm text-muted-foreground sm:text-base">Hand-picked services from top providers</p>
-              </div>
-              <Link to="/services?featured=true">
-                <Button variant="ghost" className="gap-1.5 text-sm">
-                  View All <ArrowRight className="h-4 w-4" />
-                </Button>
-              </Link>
-            </div>
-            <div className="mt-6 sm:mt-8">
-              {featuredLoading ? (
-                <div className="flex gap-3 overflow-hidden sm:gap-4">
-                  {Array.from({ length: 5 }).map((_, i) => (
-                    <div key={i} className="w-[180px] flex-shrink-0 sm:w-[220px] lg:w-[260px]">
-                      <Skeleton className="aspect-[4/3] w-full rounded-xl" />
-                      <Skeleton className="mt-2 h-4 w-3/4 rounded" />
-                      <Skeleton className="mt-1 h-3 w-1/2 rounded" />
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <FeaturedCarousel services={featuredServices!} />
-              )}
-            </div>
-          </div>
-        </section>
-      )}
+      {/* Featured Services for guests (original position) */}
+      {!user && hasFeatured && <FeaturedSection />}
 
       {/* Recent Listings */}
       <section className="py-10 sm:py-12 md:py-16">
