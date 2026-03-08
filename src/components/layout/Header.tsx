@@ -136,6 +136,12 @@ export function Header() {
                     </div>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem asChild>
+                      <Link to="/profile" className="flex items-center gap-2">
+                        <UserCircle className="h-4 w-4" />
+                        Profile
+                      </Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
                       <Link to="/saved" className="flex items-center gap-2">
                         <Heart className="h-4 w-4" />
                         Saved Services
