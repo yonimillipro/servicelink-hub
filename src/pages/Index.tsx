@@ -120,10 +120,14 @@ const Index = () => {
                 </Button>
               </Link>
             </div>
-            <div className="mt-6 sm:mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3 sm:gap-6">
+            <div className="mt-6 sm:mt-8 flex gap-4 overflow-x-auto pb-4 snap-x snap-mandatory sm:gap-6 scrollbar-hide">
               {featuredLoading
-                ? Array.from({ length: 3 }).map((_, i) => <Skeleton key={i} className="h-80 rounded-xl" />)
-                : featuredServices?.map((service) => <ServiceCard key={service.id} service={service} />)
+                ? Array.from({ length: 3 }).map((_, i) => <Skeleton key={i} className="h-80 min-w-[280px] flex-shrink-0 rounded-xl sm:min-w-[320px]" />)
+                : featuredServices?.map((service) => (
+                    <div key={service.id} className="min-w-[280px] flex-shrink-0 snap-start sm:min-w-[320px] lg:min-w-[340px]">
+                      <ServiceCard service={service} />
+                    </div>
+                  ))
               }
             </div>
           </div>
