@@ -51,6 +51,18 @@ export function ServiceCard({ service, className }: ServiceCardProps) {
         className
       )}
     >
+      {/* Save button */}
+      <button
+        type="button"
+        onClick={handleToggleSave}
+        className={cn(
+          "absolute right-3 top-3 z-10 flex h-8 w-8 items-center justify-center rounded-full bg-card/80 backdrop-blur-sm transition-all hover:scale-110",
+          isSaved ? "text-red-500" : "text-muted-foreground hover:text-red-500"
+        )}
+      >
+        <Heart className={cn("h-4 w-4", isSaved && "fill-current")} />
+      </button>
+
       {service.is_featured && (
         <div className="featured-badge">
           <Star className="h-3 w-3 fill-current" />
