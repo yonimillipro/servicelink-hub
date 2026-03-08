@@ -240,7 +240,7 @@ const ServiceDetail = () => {
             </div>
           </div>
         </div>
-      </div>
+      </motion.div>
     </Layout>
   );
 };
