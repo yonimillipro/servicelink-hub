@@ -24,6 +24,7 @@ import NotFound from "./pages/NotFound";
 import Careers from "./pages/Careers";
 import Blog from "./pages/Blog";
 import CookiePolicy from "./pages/CookiePolicy";
+import SavedServices from "./pages/SavedServices";
 
 // Provider dashboard pages
 import Dashboard from "./pages/dashboard/Dashboard";
