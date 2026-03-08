@@ -1,4 +1,4 @@
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Search, Menu, X, User, Plus, LogOut, LayoutDashboard, ShieldCheck, ChevronDown } from "lucide-react";
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
@@ -13,6 +13,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Input } from "@/components/ui/input";
 
 const navLinks = [
   { label: "Home", href: "/" },
@@ -24,7 +25,9 @@ const navLinks = [
 export function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [headerQuery, setHeaderQuery] = useState("");
   const location = useLocation();
+  const navigate = useNavigate();
   const { user, profile, isAdmin, isProvider, signOut } = useAuth();
 
   useEffect(() => {
@@ -92,11 +95,26 @@ export function Header() {
 
           {/* Desktop Actions */}
           <div className="hidden items-center gap-1.5 md:flex">
-            <Link to="/search">
-              <Button variant="ghost" size="icon" className="h-9 w-9 text-muted-foreground">
-                <Search className="h-4 w-4" />
-              </Button>
-            </Link>
+            {/* Inline search */}
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                if (headerQuery.trim()) {
+                  navigate(`/search?q=${encodeURIComponent(headerQuery.trim())}`);
+                  setHeaderQuery("");
+                }
+              }}
+              className="relative"
+            >
+              <Search className="absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground" />
+              <Input
+                type="text"
+                placeholder="Search services, companies, or categories..."
+                value={headerQuery}
+                onChange={(e) => setHeaderQuery(e.target.value)}
+                className="h-8 w-56 rounded-md border-border bg-secondary/50 pl-8 pr-3 text-xs placeholder:text-muted-foreground focus-visible:ring-1 lg:w-72"
+              />
+            </form>
             <ThemeToggle />
 
             {user ? (
@@ -190,6 +208,28 @@ export function Header() {
                 </div>
               </div>
             )}
+
+            {/* Mobile search */}
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                if (headerQuery.trim()) {
+                  navigate(`/search?q=${encodeURIComponent(headerQuery.trim())}`);
+                  setHeaderQuery("");
+                  setIsMenuOpen(false);
+                }
+              }}
+              className="relative mb-3"
+            >
+              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+              <Input
+                type="text"
+                placeholder="Search services, companies, or categories..."
+                value={headerQuery}
+                onChange={(e) => setHeaderQuery(e.target.value)}
+                className="h-10 w-full rounded-lg border-border bg-secondary/50 pl-9 pr-3 text-sm placeholder:text-muted-foreground"
+              />
+            </form>
 
             <nav className="flex flex-col gap-1">
               {navLinks.map((link) => {
