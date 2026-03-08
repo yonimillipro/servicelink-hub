@@ -46,7 +46,7 @@ export default function AdminDashboard() {
             {servicesLoading ? (
               <Skeleton className="h-8 w-16" />
             ) : (
-              <div className="text-2xl font-bold">{allServices?.length || 0}</div>
+              <div className="text-2xl font-bold">{totalServicesCount}</div>
             )}
           </CardContent>
         </Card>
