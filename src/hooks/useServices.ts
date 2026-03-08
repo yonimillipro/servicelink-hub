@@ -37,6 +37,7 @@ export interface PaginatedServices {
 
 export function useServices(options: UseServicesOptions = {}) {
   const { categorySlug, featured, status = "approved", limit, companyId, page = 1, pageSize = 12 } = options;
+  const statusFilter = status === undefined ? "approved" : status;
 
   return useQuery({
     queryKey: ["services", options],
