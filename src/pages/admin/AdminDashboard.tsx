@@ -29,7 +29,7 @@ export default function AdminDashboard() {
               <Skeleton className="h-8 w-16" />
             ) : (
               <div className="text-2xl font-bold text-yellow-600">
-                {pendingServices?.length || 0}
+                {pendingResult?.count ?? 0}
               </div>
             )}
           </CardContent>
