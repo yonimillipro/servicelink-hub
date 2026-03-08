@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Skeleton } from "@/components/ui/skeleton";
+import { motion } from "@/components/ui/motion";
 import { useServiceById } from "@/hooks/useServices";
 import { useCreateInquiry } from "@/hooks/useInquiries";
 import { useServiceImages } from "@/hooks/useServiceImages";
