@@ -95,11 +95,26 @@ export function Header() {
 
           {/* Desktop Actions */}
           <div className="hidden items-center gap-1.5 md:flex">
-            <Link to="/search">
-              <Button variant="ghost" size="icon" className="h-9 w-9 text-muted-foreground">
-                <Search className="h-4 w-4" />
-              </Button>
-            </Link>
+            {/* Inline search */}
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                if (headerQuery.trim()) {
+                  navigate(`/search?q=${encodeURIComponent(headerQuery.trim())}`);
+                  setHeaderQuery("");
+                }
+              }}
+              className="relative"
+            >
+              <Search className="absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground" />
+              <Input
+                type="text"
+                placeholder="Search services, companies, or categories..."
+                value={headerQuery}
+                onChange={(e) => setHeaderQuery(e.target.value)}
+                className="h-8 w-56 rounded-md border-border bg-secondary/50 pl-8 pr-3 text-xs placeholder:text-muted-foreground focus-visible:ring-1 lg:w-72"
+              />
+            </form>
             <ThemeToggle />
 
             {user ? (
