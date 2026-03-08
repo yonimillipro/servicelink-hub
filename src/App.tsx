@@ -25,6 +25,7 @@ import Careers from "./pages/Careers";
 import Blog from "./pages/Blog";
 import CookiePolicy from "./pages/CookiePolicy";
 import SavedServices from "./pages/SavedServices";
+import Profile from "./pages/Profile";
 
 // Provider dashboard pages
 import Dashboard from "./pages/dashboard/Dashboard";
@@ -84,6 +85,11 @@ const App = () => (
               <Route path="/saved" element={
                 <ProtectedRoute>
                   <SavedServices />
+                </ProtectedRoute>
+              } />
+              <Route path="/profile" element={
+                <ProtectedRoute>
+                  <Profile />
                 </ProtectedRoute>
               } />
 
