@@ -1,13 +1,16 @@
 import { Layout } from "@/components/layout/Layout";
 import { SearchBar } from "@/components/search/SearchBar";
 import { ServiceCard } from "@/components/service/ServiceCard";
+import { ServiceCardSkeleton } from "@/components/service/ServiceCardSkeleton";
 import { CategoryCard } from "@/components/category/CategoryCard";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+import { StaggerGrid, MotionCard, motion } from "@/components/ui/motion";
+import { EmptyState } from "@/components/ui/empty-state";
 import { useServices } from "@/hooks/useServices";
-import { useCategoriesWithCount } from "@/hooks/useCategories"; // live counts
+import { useCategoriesWithCount } from "@/hooks/useCategories";
 import { useAuth } from "@/hooks/useAuth";
-import { ArrowRight, Shield, Clock, Users, Star } from "lucide-react";
+import { ArrowRight, Shield, Clock, Users, Star, PackageOpen } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 
@@ -47,19 +50,29 @@ const Index = () => {
       {/* Hero */}
       <section className="hero-gradient relative overflow-hidden py-16 sm:py-20 md:py-28">
         <div className="container-padded relative z-10">
-          <div className="mx-auto max-w-3xl text-center">
-            <h1 className="text-white animate-fade-in">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4 }}
+            className="mx-auto max-w-3xl text-center"
+          >
+            <h1 className="text-white">
               Find Trusted Services
               <br />
               <span className="text-white/80">Near You</span>
             </h1>
-            <p className="mt-4 text-base text-white/70 sm:text-lg md:text-xl animate-slide-up max-w-2xl mx-auto">
+            <p className="mt-4 text-base text-white/70 sm:text-lg md:text-xl max-w-2xl mx-auto">
               Connect with verified professionals and businesses. From home repairs to digital services, find the right expert for any job.
             </p>
-            <div className="mt-8 sm:mt-10 animate-slide-up" style={{ animationDelay: "0.1s" }}>
+            <motion.div
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.35, delay: 0.15 }}
+              className="mt-8 sm:mt-10"
+            >
               <SearchBar className="mx-auto max-w-2xl" onSearch={handleSearch} />
-            </div>
-          </div>
+            </motion.div>
+          </motion.div>
         </div>
         <div className="absolute -right-20 -top-20 h-64 w-64 rounded-full bg-white/5" />
         <div className="absolute -bottom-32 -left-32 h-96 w-96 rounded-full bg-white/5" />
@@ -69,12 +82,18 @@ const Index = () => {
       <section className="border-b bg-card py-6 sm:py-8">
         <div className="container-padded">
           <div className="grid grid-cols-2 gap-4 sm:gap-6 md:grid-cols-4">
-            {stats.map((stat) => (
-              <div key={stat.label} className="text-center">
+            {stats.map((stat, i) => (
+              <motion.div
+                key={stat.label}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.25, delay: i * 0.05 }}
+                className="text-center"
+              >
                 <stat.icon className="mx-auto h-6 w-6 sm:h-8 sm:w-8 text-primary" />
                 <p className="mt-1.5 text-xl font-bold text-foreground sm:text-2xl">{stat.value}</p>
                 <p className="text-xs text-muted-foreground sm:text-sm">{stat.label}</p>
-              </div>
+              </motion.div>
             ))}
           </div>
         </div>
@@ -94,14 +113,16 @@ const Index = () => {
               </Button>
             </Link>
           </div>
-          <div className="mt-6 sm:mt-8 grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 sm:gap-4">
+          <StaggerGrid className="mt-6 sm:mt-8 grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 sm:gap-4">
             {categoriesLoading
               ? Array.from({ length: 8 }).map((_, i) => <Skeleton key={i} className="h-24 rounded-xl" />)
               : categories?.slice(0, 8).map((category) => (
-                  <CategoryCard key={category.id} category={category} variant="compact" />
+                  <MotionCard key={category.id}>
+                    <CategoryCard category={category} variant="compact" />
+                  </MotionCard>
                 ))
             }
-          </div>
+          </StaggerGrid>
         </div>
       </section>
 
@@ -122,11 +143,21 @@ const Index = () => {
             </div>
             <div className="mt-6 sm:mt-8 flex gap-4 overflow-x-auto pb-4 snap-x snap-mandatory sm:gap-6 scrollbar-hide">
               {featuredLoading
-                ? Array.from({ length: 3 }).map((_, i) => <Skeleton key={i} className="h-80 min-w-[280px] flex-shrink-0 rounded-xl sm:min-w-[320px]" />)
-                : featuredServices?.map((service) => (
-                    <div key={service.id} className="min-w-[280px] flex-shrink-0 snap-start sm:min-w-[320px] lg:min-w-[340px]">
-                      <ServiceCard service={service} />
+                ? Array.from({ length: 3 }).map((_, i) => (
+                    <div key={i} className="min-w-[280px] flex-shrink-0 sm:min-w-[320px]">
+                      <ServiceCardSkeleton />
                     </div>
+                  ))
+                : featuredServices?.map((service, i) => (
+                    <motion.div
+                      key={service.id}
+                      initial={{ opacity: 0, x: 20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ duration: 0.25, delay: i * 0.06 }}
+                      className="min-w-[280px] flex-shrink-0 snap-start sm:min-w-[320px] lg:min-w-[340px]"
+                    >
+                      <ServiceCard service={service} />
+                    </motion.div>
                   ))
               }
             </div>
@@ -148,18 +179,28 @@ const Index = () => {
               </Button>
             </Link>
           </div>
-          <div className="mt-6 sm:mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3 sm:gap-6">
-            {recentLoading
-              ? Array.from({ length: 6 }).map((_, i) => <Skeleton key={i} className="h-80 rounded-xl" />)
-              : recentServices && recentServices.length > 0
-                ? recentServices.map((service) => <ServiceCard key={service.id} service={service} />)
-                : (
-                    <div className="col-span-full rounded-xl border border-dashed border-border py-12 text-center">
-                      <p className="text-muted-foreground">No services available yet.</p>
-                      <Button className="mt-4" onClick={handleBeFirstToPost}>Be the first to post</Button>
-                    </div>
-                  )
-            }
+          <div className="mt-6 sm:mt-8">
+            {recentLoading ? (
+              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 sm:gap-6">
+                {Array.from({ length: 6 }).map((_, i) => <ServiceCardSkeleton key={i} />)}
+              </div>
+            ) : recentServices && recentServices.length > 0 ? (
+              <StaggerGrid className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 sm:gap-6">
+                {recentServices.map((service) => (
+                  <MotionCard key={service.id}>
+                    <ServiceCard service={service} />
+                  </MotionCard>
+                ))}
+              </StaggerGrid>
+            ) : (
+              <EmptyState
+                icon={PackageOpen}
+                title="No services available yet"
+                description="Be the first to share your services with the community."
+                actionLabel="Post a Service"
+                onAction={handleBeFirstToPost}
+              />
+            )}
           </div>
         </div>
       </section>

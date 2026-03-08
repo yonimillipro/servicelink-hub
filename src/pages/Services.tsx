@@ -2,13 +2,15 @@ import { useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { Layout } from "@/components/layout/Layout";
 import { ServiceCard } from "@/components/service/ServiceCard";
+import { ServiceCardSkeleton } from "@/components/service/ServiceCardSkeleton";
 import { SearchBar } from "@/components/search/SearchBar";
 import { Button } from "@/components/ui/button";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { EmptyState } from "@/components/ui/empty-state";
+import { StaggerGrid, MotionCard } from "@/components/ui/motion";
+import { FilterPanel } from "@/components/service/FilterPanel";
 import { useServices } from "@/hooks/useServices";
 import { useCategories } from "@/hooks/useCategories";
-import { Grid3X3, List, ChevronLeft, ChevronRight } from "lucide-react";
+import { Grid3X3, List, ChevronLeft, ChevronRight, SlidersHorizontal, PackageSearch } from "lucide-react";
 
 const PAGE_SIZE = 12;
 
@@ -16,6 +18,9 @@ const Services = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [sortBy, setSortBy] = useState("none");
+  const [filterOpen, setFilterOpen] = useState(false);
+  const [verifiedOnly, setVerifiedOnly] = useState(false);
+  const [minRating, setMinRating] = useState(0);
 
   const currentPage = Number(searchParams.get("page") || "1");
   const searchQuery = searchParams.get("q") || "";
@@ -32,10 +37,8 @@ const Services = () => {
     pageSize: PAGE_SIZE,
   });
 
-  // Get services and apply client-side sorting + search filtering
   let services = result?.data || [];
 
-  // Client-side search filtering
   if (searchQuery) {
     const q = searchQuery.toLowerCase();
     services = services.filter(s =>
@@ -49,10 +52,11 @@ const Services = () => {
       s.location && s.location.toLowerCase().includes(loc)
     );
   }
+  if (verifiedOnly) {
+    services = services.filter(s => s.companies?.verified);
+  }
 
-  // Sort featured first, then apply user sort
   services = [...services].sort((a, b) => {
-    // Featured always first
     if (a.is_featured && !b.is_featured) return -1;
     if (!a.is_featured && b.is_featured) return 1;
     return 0;
@@ -93,13 +97,17 @@ const Services = () => {
 
   const handleCategoryChange = (value: string) => {
     const params = new URLSearchParams(searchParams);
-    if (value === "all") {
-      params.delete("category");
-    } else {
-      params.set("category", value);
-    }
+    if (value === "all") params.delete("category");
+    else params.set("category", value);
     params.delete("page");
     setSearchParams(params);
+  };
+
+  const handleResetFilters = () => {
+    setSortBy("none");
+    setVerifiedOnly(false);
+    setMinRating(0);
+    handleCategoryChange("all");
   };
 
   const goToPage = (page: number) => {
@@ -139,6 +147,22 @@ const Services = () => {
 
   return (
     <Layout>
+      {/* Filter Panel */}
+      <FilterPanel
+        isOpen={filterOpen}
+        onClose={() => setFilterOpen(false)}
+        categories={categories}
+        selectedCategory={selectedCategorySlug}
+        onCategoryChange={handleCategoryChange}
+        sortBy={sortBy}
+        onSortChange={setSortBy}
+        verifiedOnly={verifiedOnly}
+        onVerifiedChange={setVerifiedOnly}
+        minRating={minRating}
+        onMinRatingChange={setMinRating}
+        onReset={handleResetFilters}
+      />
+
       {/* Header */}
       <section className="border-b bg-card py-5 sm:py-6 md:py-8">
         <div className="container-padded">
@@ -150,6 +174,10 @@ const Services = () => {
               {selectedCategory?.description && <p className="mt-1 text-sm text-muted-foreground">{selectedCategory.description}</p>}
             </div>
             <div className="flex items-center gap-2">
+              <Button variant="outline" className="gap-2" onClick={() => setFilterOpen(true)}>
+                <SlidersHorizontal className="h-4 w-4" />
+                <span className="hidden sm:inline">Filters</span>
+              </Button>
               <Button variant={viewMode === "grid" ? "default" : "outline"} size="icon" className="h-9 w-9" onClick={() => setViewMode("grid")}>
                 <Grid3X3 className="h-4 w-4" />
               </Button>
@@ -164,39 +192,12 @@ const Services = () => {
         </div>
       </section>
 
-      {/* Filters & Results */}
+      {/* Results */}
       <section className="py-5 sm:py-6 md:py-8">
         <div className="container-padded">
-          <div className="mb-5 flex flex-wrap items-center gap-2 sm:gap-3">
-            <Select value={selectedCategorySlug || "all"} onValueChange={handleCategoryChange}>
-              <SelectTrigger className="w-[160px] sm:w-[180px]">
-                <SelectValue placeholder="Category" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Categories</SelectItem>
-                {categories?.map((cat) => (
-                  <SelectItem key={cat.id} value={cat.slug}>{cat.name}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-
-            <Select value={sortBy} onValueChange={setSortBy}>
-              <SelectTrigger className="w-[140px] sm:w-[150px]">
-                <SelectValue placeholder="Sort by" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="none">None</SelectItem>
-                <SelectItem value="newest">Newest First</SelectItem>
-                <SelectItem value="oldest">Oldest First</SelectItem>
-                <SelectItem value="price-low">Price: Low to High</SelectItem>
-                <SelectItem value="price-high">Price: High to Low</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-
           {isLoading ? (
             <div className={viewMode === "grid" ? "grid gap-4 sm:grid-cols-2 lg:grid-cols-3 sm:gap-6" : "space-y-4"}>
-              {Array.from({ length: 6 }).map((_, i) => <Skeleton key={i} className="h-72 rounded-xl sm:h-80" />)}
+              {Array.from({ length: 6 }).map((_, i) => <ServiceCardSkeleton key={i} />)}
             </div>
           ) : services && services.length > 0 ? (
             <>
@@ -204,15 +205,23 @@ const Services = () => {
                 {totalCount} service{totalCount !== 1 ? "s" : ""} found
                 {totalPages > 1 && ` • Page ${currentPage} of ${totalPages}`}
               </p>
-              <div className={viewMode === "grid" ? "grid gap-4 sm:grid-cols-2 lg:grid-cols-3 sm:gap-6" : "space-y-4"}>
-                {services.map((service) => <ServiceCard key={service.id} service={service} />)}
-              </div>
+              <StaggerGrid className={viewMode === "grid" ? "grid gap-4 sm:grid-cols-2 lg:grid-cols-3 sm:gap-6" : "space-y-4"}>
+                {services.map((service) => (
+                  <MotionCard key={service.id}>
+                    <ServiceCard service={service} />
+                  </MotionCard>
+                ))}
+              </StaggerGrid>
               {renderPagination()}
             </>
           ) : (
-            <div className="rounded-xl border border-dashed border-border py-12 text-center">
-              <p className="text-muted-foreground">No services found. Try adjusting your filters.</p>
-            </div>
+            <EmptyState
+              icon={PackageSearch}
+              title="No services found"
+              description="Try adjusting your filters or search terms to find what you're looking for."
+              actionLabel="Reset Filters"
+              onAction={handleResetFilters}
+            />
           )}
         </div>
       </section>
