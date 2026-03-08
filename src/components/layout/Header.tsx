@@ -209,6 +209,28 @@ export function Header() {
               </div>
             )}
 
+            {/* Mobile search */}
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                if (headerQuery.trim()) {
+                  navigate(`/search?q=${encodeURIComponent(headerQuery.trim())}`);
+                  setHeaderQuery("");
+                  setIsMenuOpen(false);
+                }
+              }}
+              className="relative mb-3"
+            >
+              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+              <Input
+                type="text"
+                placeholder="Search services, companies, or categories..."
+                value={headerQuery}
+                onChange={(e) => setHeaderQuery(e.target.value)}
+                className="h-10 w-full rounded-lg border-border bg-secondary/50 pl-9 pr-3 text-sm placeholder:text-muted-foreground"
+              />
+            </form>
+
             <nav className="flex flex-col gap-1">
               {navLinks.map((link) => {
                 const isActive = location.pathname === link.href;
