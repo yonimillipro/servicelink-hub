@@ -2,6 +2,7 @@ import { Layout } from "@/components/layout/Layout";
 import { SearchBar } from "@/components/search/SearchBar";
 import { ServiceCard } from "@/components/service/ServiceCard";
 import { ServiceCardSkeleton } from "@/components/service/ServiceCardSkeleton";
+import { FeaturedCarousel } from "@/components/service/FeaturedCarousel";
 import { CategoryCard } from "@/components/category/CategoryCard";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -141,25 +142,20 @@ const Index = () => {
                 </Button>
               </Link>
             </div>
-            <div className="mt-6 sm:mt-8 flex gap-4 overflow-x-auto pb-4 snap-x snap-mandatory sm:gap-6 scrollbar-hide">
-              {featuredLoading
-                ? Array.from({ length: 3 }).map((_, i) => (
-                    <div key={i} className="min-w-[280px] flex-shrink-0 sm:min-w-[320px]">
-                      <ServiceCardSkeleton />
+            <div className="mt-6 sm:mt-8">
+              {featuredLoading ? (
+                <div className="flex gap-3 overflow-hidden sm:gap-4">
+                  {Array.from({ length: 5 }).map((_, i) => (
+                    <div key={i} className="w-[180px] flex-shrink-0 sm:w-[220px] lg:w-[260px]">
+                      <Skeleton className="aspect-[4/3] w-full rounded-xl" />
+                      <Skeleton className="mt-2 h-4 w-3/4 rounded" />
+                      <Skeleton className="mt-1 h-3 w-1/2 rounded" />
                     </div>
-                  ))
-                : featuredServices?.map((service, i) => (
-                    <motion.div
-                      key={service.id}
-                      initial={{ opacity: 0, x: 20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ duration: 0.25, delay: i * 0.06 }}
-                      className="min-w-[280px] flex-shrink-0 snap-start sm:min-w-[320px] lg:min-w-[340px]"
-                    >
-                      <ServiceCard service={service} />
-                    </motion.div>
-                  ))
-              }
+                  ))}
+                </div>
+              ) : (
+                <FeaturedCarousel services={featuredServices!} />
+              )}
             </div>
           </div>
         </section>
