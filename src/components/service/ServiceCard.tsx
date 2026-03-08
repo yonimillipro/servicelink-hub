@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { MapPin, Star, Clock } from "lucide-react";
+import { MapPin, Star, Clock, CheckCircle2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { ServiceWithRelations } from "@/hooks/useServices";
 import { useReviewStats } from "@/hooks/useReviews";
@@ -62,8 +62,11 @@ export function ServiceCard({ service, className }: ServiceCardProps) {
         </h3>
 
         {service.companies && (
-          <p className="mt-1.5 text-sm text-muted-foreground truncate">
+          <p className="mt-1.5 flex items-center gap-1 text-sm text-muted-foreground truncate">
             by {service.companies.name}
+            {service.companies.verified && (
+              <CheckCircle2 className="h-3.5 w-3.5 shrink-0 text-green-600" />
+            )}
           </p>
         )}
 
