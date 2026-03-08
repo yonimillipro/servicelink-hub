@@ -24,6 +24,7 @@ import NotFound from "./pages/NotFound";
 import Careers from "./pages/Careers";
 import Blog from "./pages/Blog";
 import CookiePolicy from "./pages/CookiePolicy";
+import SavedServices from "./pages/SavedServices";
 
 // Provider dashboard pages
 import Dashboard from "./pages/dashboard/Dashboard";
@@ -78,6 +79,13 @@ const App = () => (
               <Route path="/login" element={<Auth />} />
               <Route path="/register" element={<Auth />} />
               <Route path="/forgot-password" element={<Auth />} />
+
+              {/* Saved Services (any logged-in user) */}
+              <Route path="/saved" element={
+                <ProtectedRoute>
+                  <SavedServices />
+                </ProtectedRoute>
+              } />
 
               {/* Provider Dashboard Routes */}
               <Route path="/dashboard" element={
