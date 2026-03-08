@@ -21,8 +21,11 @@ export default function EditService() {
   const { id } = useParams();
   const navigate = useNavigate();
   const { data: service, isLoading } = useServiceById(id);
+  const { data: existingImages } = useServiceImages(id);
   const { data: categories } = useCategories();
   const updateService = useUpdateService();
+  const addServiceImage = useAddServiceImage();
+  const deleteServiceImage = useDeleteServiceImage();
 
   const [formData, setFormData] = useState({
     title: "",
