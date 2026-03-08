@@ -135,6 +135,22 @@ export function Header() {
                       <p className="text-xs text-muted-foreground truncate">{profile?.email}</p>
                     </div>
                     <DropdownMenuSeparator />
+                    {isAdmin && (
+                      <DropdownMenuItem asChild>
+                        <Link to="/admin" className="flex items-center gap-2">
+                          <ShieldCheck className="h-4 w-4" />
+                          Admin Dashboard
+                        </Link>
+                      </DropdownMenuItem>
+                    )}
+                    {isProvider && !isAdmin && (
+                      <DropdownMenuItem asChild>
+                        <Link to="/dashboard" className="flex items-center gap-2">
+                          <LayoutDashboard className="h-4 w-4" />
+                          Company Dashboard
+                        </Link>
+                      </DropdownMenuItem>
+                    )}
                     <DropdownMenuItem asChild>
                       <Link to="/profile" className="flex items-center gap-2">
                         <UserCircle className="h-4 w-4" />
