@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { MapPin, Star, Clock } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { ServiceWithRelations } from "@/hooks/useServices";
+import { useReviewStats } from "@/hooks/useReviews";
 
 interface ServiceCardProps {
   service: ServiceWithRelations;
@@ -9,6 +10,7 @@ interface ServiceCardProps {
 }
 
 export function ServiceCard({ service, className }: ServiceCardProps) {
+  const { data: stats } = useReviewStats(service.id);
   const formatPrice = (price: number | null, type: string | null) => {
     if (!price) return "Contact for price";
     const formatted = new Intl.NumberFormat("en-ET", {
@@ -62,6 +64,14 @@ export function ServiceCard({ service, className }: ServiceCardProps) {
           <p className="mt-1.5 text-sm text-muted-foreground truncate">
             by {service.companies.name}
           </p>
+        )}
+
+        {stats && stats.count > 0 && (
+          <div className="mt-2 flex items-center gap-1 text-xs">
+            <Star className="h-3.5 w-3.5 fill-current text-amber-500" />
+            <span className="font-medium text-foreground">{stats.average.toFixed(1)}</span>
+            <span className="text-muted-foreground">({stats.count})</span>
+          </div>
         )}
 
         {service.location && (

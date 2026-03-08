@@ -9,6 +9,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useServiceById } from "@/hooks/useServices";
 import { useCreateInquiry } from "@/hooks/useInquiries";
 import { useAuth } from "@/hooks/useAuth";
+import { ReviewSection } from "@/components/review/ReviewSection";
 import { MapPin, ChevronLeft, CheckCircle2, Loader2, Mail } from "lucide-react";
 import { toast } from "sonner";
 import { z } from "zod";
@@ -143,7 +144,7 @@ const ServiceDetail = () => {
                       <p className="text-xs text-muted-foreground sm:text-sm">{service.companies.location}</p>
                     )}
                   </div>
-                </Link>
+              </Link>
               )}
 
               <div className="mt-6 sm:mt-8">
@@ -152,6 +153,9 @@ const ServiceDetail = () => {
                   {service.description}
                 </p>
               </div>
+
+              {/* Reviews Section */}
+              <ReviewSection serviceId={service.id} />
             </div>
           </div>
 
