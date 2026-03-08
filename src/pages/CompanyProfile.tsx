@@ -2,10 +2,13 @@ import { useParams, Link, useNavigate } from "react-router-dom";
 import { Layout } from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
 import { ServiceCard } from "@/components/service/ServiceCard";
+import { ServiceCardSkeleton } from "@/components/service/ServiceCardSkeleton";
 import { Skeleton } from "@/components/ui/skeleton";
+import { EmptyState } from "@/components/ui/empty-state";
+import { StaggerGrid, MotionCard, motion } from "@/components/ui/motion";
 import { useCompanyById } from "@/hooks/useCompanies";
 import { useServices } from "@/hooks/useServices";
-import { MapPin, Star, Phone, Mail, Calendar, CheckCircle2, ChevronLeft, Share2 } from "lucide-react";
+import { MapPin, Phone, Mail, Calendar, CheckCircle2, ChevronLeft, Share2, PackageOpen } from "lucide-react";
 
 const CompanyProfile = () => {
   const { id } = useParams();
