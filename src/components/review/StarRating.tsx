@@ -25,7 +25,7 @@ export function StarRating({ rating, maxStars = 5, size = "md", interactive = fa
             className={cn(
               "transition-colors",
               interactive ? "cursor-pointer hover:scale-110" : "cursor-default",
-              filled ? "text-yellow-500" : "text-muted-foreground/30"
+              filled ? "text-amber-500" : "text-muted-foreground/30"
             )}
           >
             <Star className={cn(sizeMap[size], filled && "fill-current")} />

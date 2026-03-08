@@ -23,11 +23,28 @@ export function useReviews(serviceId: string | undefined) {
       if (!serviceId) return [];
       const { data, error } = await supabase
         .from("reviews")
-        .select("*, profiles(full_name, avatar_url)")
+        .select("*")
         .eq("service_id", serviceId)
         .order("created_at", { ascending: false });
       if (error) throw error;
-      return (data || []) as Review[];
+      const reviews = data || [];
+      
+      // Fetch profile data for reviewers
+      if (reviews.length === 0) return [];
+      const userIds = [...new Set(reviews.map((r) => r.user_id))];
+      const { data: profiles } = await supabase
+        .from("profiles")
+        .select("id, full_name, avatar_url")
+        .in("id", userIds);
+      
+      const profileMap = new Map((profiles || []).map((p) => [p.id, p]));
+      return reviews.map((r) => ({
+        ...r,
+        profiles: profileMap.get(r.user_id) ? {
+          full_name: profileMap.get(r.user_id)!.full_name,
+          avatar_url: profileMap.get(r.user_id)!.avatar_url,
+        } : null,
+      })) as Review[];
     },
     enabled: !!serviceId,
   });
