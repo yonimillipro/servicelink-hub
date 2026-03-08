@@ -72,8 +72,20 @@ export default function EditService() {
         price_type: formData.priceType,
         price: formData.price ? parseFloat(formData.price) : null,
         location: formData.location || null,
-        image: formData.image || null,
+        image: formData.image || (galleryImages.length > 0 ? galleryImages[0] : null),
       });
+
+      // Sync gallery images: delete removed, add new
+      const existingUrls = (existingImages || []).map((img) => img.image_url);
+      const toDelete = (existingImages || []).filter((img) => !galleryImages.includes(img.image_url));
+      const toAdd = galleryImages.filter((url) => !existingUrls.includes(url));
+
+      for (const img of toDelete) {
+        await deleteServiceImage.mutateAsync({ id: img.id, serviceId: id });
+      }
+      for (const url of toAdd) {
+        await addServiceImage.mutateAsync({ serviceId: id, imageUrl: url });
+      }
 
       toast.success("Service updated successfully!");
       navigate("/dashboard/services");
