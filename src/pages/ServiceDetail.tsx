@@ -117,13 +117,7 @@ const ServiceDetail = () => {
         <div className="grid gap-6 lg:grid-cols-3 lg:gap-8">
           {/* Main Content */}
           <div className="lg:col-span-2">
-            <div className="overflow-hidden rounded-xl border border-border">
-              <img
-                src={service.image || "/placeholder.svg"}
-                alt={service.title}
-                className="h-56 w-full object-cover sm:h-72 md:h-96"
-              />
-            </div>
+            <ImageGallery mainImage={service.image} galleryImages={galleryImages || []} />
 
             <div className="mt-5 sm:mt-6">
               {service.categories && (
