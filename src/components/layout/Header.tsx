@@ -25,7 +25,9 @@ const navLinks = [
 export function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [headerQuery, setHeaderQuery] = useState("");
   const location = useLocation();
+  const navigate = useNavigate();
   const { user, profile, isAdmin, isProvider, signOut } = useAuth();
 
   useEffect(() => {
