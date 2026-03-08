@@ -65,8 +65,8 @@ export function useServices(options: UseServicesOptions = {}) {
         `, { count: "exact" })
         .order("created_at", { ascending: false });
 
-      if (status) {
-        query = query.eq("status", status);
+      if (statusFilter) {
+        query = query.eq("status", statusFilter);
       }
 
       if (categoryId) {
