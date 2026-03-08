@@ -66,6 +66,14 @@ export function ServiceCard({ service, className }: ServiceCardProps) {
           </p>
         )}
 
+        {stats && stats.count > 0 && (
+          <div className="mt-2 flex items-center gap-1 text-xs">
+            <Star className="h-3.5 w-3.5 fill-current text-amber-500" />
+            <span className="font-medium text-foreground">{stats.average.toFixed(1)}</span>
+            <span className="text-muted-foreground">({stats.count})</span>
+          </div>
+        )}
+
         {service.location && (
           <div className="mt-2.5 flex items-center gap-1.5 text-xs text-muted-foreground">
             <MapPin className="h-3.5 w-3.5 shrink-0" />
