@@ -65,7 +65,8 @@ export default function SearchPage() {
             </>
           ) : (
             <div className="py-16 text-center sm:py-20">
-              <p className="text-muted-foreground">No services found for your search.</p>
+              <Search className="mx-auto h-10 w-10 text-muted-foreground/30" />
+              <p className="mt-3 text-muted-foreground">No services found. Try another search.</p>
             </div>
           )}
         </div>
