@@ -1,5 +1,5 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { Search, Menu, X, User, Plus, LogOut, LayoutDashboard, ShieldCheck, ChevronDown } from "lucide-react";
+import { Search, Menu, X, User, Plus, LogOut, LayoutDashboard, ShieldCheck, ChevronDown, Heart } from "lucide-react";
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
