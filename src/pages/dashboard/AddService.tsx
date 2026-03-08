@@ -34,6 +34,7 @@ export default function AddService() {
   const { data: categories } = useCategories();
   const { data: company, isLoading: companyLoading } = useMyCompany();
   const createService = useCreateService();
+  const addServiceImage = useAddServiceImage();
 
   const [formData, setFormData] = useState({
     title: "",
