@@ -8,8 +8,10 @@ import { Label } from "@/components/ui/label";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useServiceById } from "@/hooks/useServices";
 import { useCreateInquiry } from "@/hooks/useInquiries";
+import { useServiceImages } from "@/hooks/useServiceImages";
 import { useAuth } from "@/hooks/useAuth";
 import { ReviewSection } from "@/components/review/ReviewSection";
+import { ImageGallery } from "@/components/service/ImageGallery";
 import { MapPin, ChevronLeft, CheckCircle2, Loader2, Mail } from "lucide-react";
 import { toast } from "sonner";
 import { z } from "zod";
@@ -25,6 +27,7 @@ const ServiceDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { data: service, isLoading } = useServiceById(id);
+  const { data: galleryImages } = useServiceImages(id);
   const createInquiry = useCreateInquiry();
   const { user } = useAuth();
 
@@ -114,13 +117,7 @@ const ServiceDetail = () => {
         <div className="grid gap-6 lg:grid-cols-3 lg:gap-8">
           {/* Main Content */}
           <div className="lg:col-span-2">
-            <div className="overflow-hidden rounded-xl border border-border">
-              <img
-                src={service.image || "/placeholder.svg"}
-                alt={service.title}
-                className="h-56 w-full object-cover sm:h-72 md:h-96"
-              />
-            </div>
+            <ImageGallery mainImage={service.image} galleryImages={galleryImages || []} />
 
             <div className="mt-5 sm:mt-6">
               {service.categories && (

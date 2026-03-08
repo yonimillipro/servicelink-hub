@@ -10,6 +10,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Skeleton } from "@/components/ui/skeleton";
 import { useCategories } from "@/hooks/useCategories";
 import { useServiceById, useUpdateService } from "@/hooks/useServices";
+import { useServiceImages, useAddServiceImage, useDeleteServiceImage } from "@/hooks/useServiceImages";
+import { ImageUploader } from "@/components/service/ImageUploader";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -19,8 +21,11 @@ export default function EditService() {
   const { id } = useParams();
   const navigate = useNavigate();
   const { data: service, isLoading } = useServiceById(id);
+  const { data: existingImages } = useServiceImages(id);
   const { data: categories } = useCategories();
   const updateService = useUpdateService();
+  const addServiceImage = useAddServiceImage();
+  const deleteServiceImage = useDeleteServiceImage();
 
   const [formData, setFormData] = useState({
     title: "",
@@ -31,6 +36,7 @@ export default function EditService() {
     location: "",
     image: "",
   });
+  const [galleryImages, setGalleryImages] = useState<string[]>([]);
 
   useEffect(() => {
     if (service) {
@@ -46,6 +52,12 @@ export default function EditService() {
     }
   }, [service]);
 
+  useEffect(() => {
+    if (existingImages) {
+      setGalleryImages(existingImages.map((img) => img.image_url));
+    }
+  }, [existingImages]);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -60,8 +72,20 @@ export default function EditService() {
         price_type: formData.priceType,
         price: formData.price ? parseFloat(formData.price) : null,
         location: formData.location || null,
-        image: formData.image || null,
+        image: formData.image || (galleryImages.length > 0 ? galleryImages[0] : null),
       });
+
+      // Sync gallery images: delete removed, add new
+      const existingUrls = (existingImages || []).map((img) => img.image_url);
+      const toDelete = (existingImages || []).filter((img) => !galleryImages.includes(img.image_url));
+      const toAdd = galleryImages.filter((url) => !existingUrls.includes(url));
+
+      for (const img of toDelete) {
+        await deleteServiceImage.mutateAsync({ id: img.id, serviceId: id });
+      }
+      for (const url of toAdd) {
+        await addServiceImage.mutateAsync({ serviceId: id, imageUrl: url });
+      }
 
       toast.success("Service updated successfully!");
       navigate("/dashboard/services");
@@ -191,12 +215,17 @@ export default function EditService() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="image">Image URL</Label>
+              <Label htmlFor="image">Main Image URL</Label>
               <Input
                 id="image"
                 value={formData.image}
                 onChange={(e) => setFormData({ ...formData, image: e.target.value })}
               />
+            </div>
+
+            <div className="space-y-2">
+              <Label>Gallery Images</Label>
+              <ImageUploader images={galleryImages} onChange={setGalleryImages} maxImages={5} />
             </div>
 
             <div className="flex gap-4">

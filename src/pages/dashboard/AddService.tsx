@@ -10,6 +10,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useCategories } from "@/hooks/useCategories";
 import { useMyCompany } from "@/hooks/useCompanies";
 import { useCreateService } from "@/hooks/useServices";
+import { useAddServiceImage } from "@/hooks/useServiceImages";
+import { ImageUploader } from "@/components/service/ImageUploader";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { z } from "zod";
@@ -32,6 +34,7 @@ export default function AddService() {
   const { data: categories } = useCategories();
   const { data: company, isLoading: companyLoading } = useMyCompany();
   const createService = useCreateService();
+  const addServiceImage = useAddServiceImage();
 
   const [formData, setFormData] = useState({
     title: "",
@@ -42,6 +45,7 @@ export default function AddService() {
     location: "",
     image: "",
   });
+  const [galleryImages, setGalleryImages] = useState<string[]>([]);
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -70,17 +74,22 @@ export default function AddService() {
     }
 
     try {
-      await createService.mutateAsync({
+      const newService = await createService.mutateAsync({
         title: formData.title,
         description: formData.description,
         category_id: formData.categoryId,
         price_type: formData.priceType,
         price: formData.price ? parseFloat(formData.price) : null,
         location: formData.location || null,
-        image: formData.image || null,
+        image: formData.image || (galleryImages.length > 0 ? galleryImages[0] : null),
         company_id: company.id,
         status: "pending",
       });
+
+      // Save gallery images
+      for (const url of galleryImages) {
+        await addServiceImage.mutateAsync({ serviceId: newService.id, imageUrl: url });
+      }
 
       toast.success("Service submitted for review!");
       navigate("/dashboard/services");
@@ -213,7 +222,7 @@ export default function AddService() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="image">Image URL</Label>
+              <Label htmlFor="image">Main Image URL</Label>
               <Input
                 id="image"
                 value={formData.image}
@@ -221,8 +230,13 @@ export default function AddService() {
                 placeholder="https://example.com/image.jpg"
               />
               <p className="text-xs text-muted-foreground">
-                Enter a URL for your service image
+                Or upload gallery images below
               </p>
+            </div>
+
+            <div className="space-y-2">
+              <Label>Gallery Images</Label>
+              <ImageUploader images={galleryImages} onChange={setGalleryImages} maxImages={5} />
             </div>
 
             <div className="flex gap-4">
