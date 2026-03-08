@@ -1,5 +1,5 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { Search, Menu, X, User, Plus, LogOut, LayoutDashboard, ShieldCheck, ChevronDown, Heart } from "lucide-react";
+import { Search, Menu, X, User, LogOut, ChevronDown, Heart } from "lucide-react";
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -41,9 +41,6 @@ export function Header() {
     setIsMenuOpen(false);
   }, [location.pathname]);
 
-  const dashboardHref = isAdmin ? "/admin" : "/dashboard";
-  const dashboardLabel = isAdmin ? "Admin Dashboard" : "Company Dashboard";
-  const DashboardIcon = isAdmin ? ShieldCheck : LayoutDashboard;
 
   const initials = profile?.full_name
     ? profile.full_name.split(" ").map((n: string) => n[0]).join("").toUpperCase().slice(0, 2)
@@ -138,20 +135,6 @@ export function Header() {
                       <p className="text-xs text-muted-foreground truncate">{profile?.email}</p>
                     </div>
                     <DropdownMenuSeparator />
-                    <DropdownMenuItem asChild>
-                      <Link to={dashboardHref} className="flex items-center gap-2">
-                        <DashboardIcon className="h-4 w-4" />
-                        {dashboardLabel}
-                      </Link>
-                    </DropdownMenuItem>
-                    {isProvider && !isAdmin && (
-                      <DropdownMenuItem asChild>
-                        <Link to="/dashboard/services/add" className="flex items-center gap-2">
-                          <Plus className="h-4 w-4" />
-                          Post a Service
-                        </Link>
-                      </DropdownMenuItem>
-                    )}
                     <DropdownMenuItem asChild>
                       <Link to="/saved" className="flex items-center gap-2">
                         <Heart className="h-4 w-4" />
@@ -260,16 +243,6 @@ export function Header() {
 
               {user ? (
                 <>
-                  <Link to={dashboardHref} className="flex items-center gap-3 rounded-lg px-4 py-2.5 text-sm font-medium text-foreground hover:bg-secondary">
-                    <DashboardIcon className="h-4 w-4" />
-                    {dashboardLabel}
-                  </Link>
-                  {isProvider && !isAdmin && (
-                    <Link to="/dashboard/services/add" className="flex items-center gap-3 rounded-lg px-4 py-2.5 text-sm font-medium text-foreground hover:bg-secondary">
-                      <Plus className="h-4 w-4" />
-                      Post a Service
-                    </Link>
-                  )}
                   <Link to="/saved" className="flex items-center gap-3 rounded-lg px-4 py-2.5 text-sm font-medium text-foreground hover:bg-secondary">
                     <Heart className="h-4 w-4" />
                     Saved Services

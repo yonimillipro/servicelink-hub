@@ -359,6 +359,40 @@ export type Database = {
       is_provider: { Args: never; Returns: boolean }
       owns_company: { Args: { _company_id: string }; Returns: boolean }
       owns_service: { Args: { _service_id: string }; Returns: boolean }
+      search_services: {
+        Args: {
+          filter_category_id?: string
+          filter_company_id?: string
+          filter_featured?: boolean
+          filter_status?: string
+          result_limit?: number
+          result_offset?: number
+          search_location?: string
+          search_query?: string
+        }
+        Returns: {
+          category_id: string
+          category_name: string
+          category_slug: string
+          company_id: string
+          company_location: string
+          company_logo_url: string
+          company_name: string
+          company_verified: boolean
+          created_at: string
+          description: string
+          id: string
+          image: string
+          is_featured: boolean
+          location: string
+          price: number
+          price_type: string
+          status: string
+          title: string
+          total_count: number
+          updated_at: string
+        }[]
+      }
     }
     Enums: {
       app_role: "admin" | "provider" | "user"
