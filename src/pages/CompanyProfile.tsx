@@ -64,9 +64,9 @@ const CompanyProfile = () => {
               <div className="flex items-center gap-3">
                 <h1 className="text-foreground">{company.name}</h1>
                 {company.verified && (
-                  <span className="flex items-center gap-1 rounded-full bg-primary/10 px-3 py-1 text-sm font-medium text-primary">
+                  <span className="flex items-center gap-1 rounded-full bg-green-100 px-3 py-1 text-sm font-medium text-green-700 dark:bg-green-900/30 dark:text-green-400">
                     <CheckCircle2 className="h-4 w-4" />
-                    Verified
+                    Verified Provider
                   </span>
                 )}
               </div>
