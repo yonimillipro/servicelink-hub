@@ -101,13 +101,6 @@ export function Header() {
 
             {user ? (
               <div className="flex items-center gap-2">
-                {/* Dashboard quick-access button */}
-                <Link to={dashboardHref}>
-                  <Button variant="outline" size="sm" className="gap-1.5">
-                    <DashboardIcon className="h-4 w-4" />
-                    {isAdmin ? "Admin" : "Dashboard"}
-                  </Button>
-                </Link>
 
                 {/* User avatar dropdown */}
                 <DropdownMenu>
