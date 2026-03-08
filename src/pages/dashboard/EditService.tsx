@@ -10,6 +10,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Skeleton } from "@/components/ui/skeleton";
 import { useCategories } from "@/hooks/useCategories";
 import { useServiceById, useUpdateService } from "@/hooks/useServices";
+import { useServiceImages, useAddServiceImage, useDeleteServiceImage } from "@/hooks/useServiceImages";
+import { ImageUploader } from "@/components/service/ImageUploader";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
 
