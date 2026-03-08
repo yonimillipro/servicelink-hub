@@ -114,8 +114,9 @@ export function FilterPanel({
                 <Label className="text-sm font-medium text-foreground">Minimum Rating</Label>
                 <div className="mt-2 flex items-center gap-3">
                   <StarRating
-                    value={minRating}
-                    onChange={onMinRatingChange}
+                    rating={minRating}
+                    interactive
+                    onRate={onMinRatingChange}
                     size="md"
                   />
                   <span className="text-sm text-muted-foreground">
