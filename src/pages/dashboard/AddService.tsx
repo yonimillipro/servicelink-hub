@@ -10,6 +10,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useCategories } from "@/hooks/useCategories";
 import { useMyCompany } from "@/hooks/useCompanies";
 import { useCreateService } from "@/hooks/useServices";
+import { useAddServiceImage } from "@/hooks/useServiceImages";
+import { ImageUploader } from "@/components/service/ImageUploader";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { z } from "zod";
