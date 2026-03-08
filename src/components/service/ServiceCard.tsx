@@ -10,6 +10,7 @@ interface ServiceCardProps {
 }
 
 export function ServiceCard({ service, className }: ServiceCardProps) {
+  const { data: stats } = useReviewStats(service.id);
   const formatPrice = (price: number | null, type: string | null) => {
     if (!price) return "Contact for price";
     const formatted = new Intl.NumberFormat("en-ET", {
