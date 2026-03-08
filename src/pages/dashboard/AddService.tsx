@@ -222,7 +222,7 @@ export default function AddService() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="image">Image URL</Label>
+              <Label htmlFor="image">Main Image URL</Label>
               <Input
                 id="image"
                 value={formData.image}
@@ -230,8 +230,13 @@ export default function AddService() {
                 placeholder="https://example.com/image.jpg"
               />
               <p className="text-xs text-muted-foreground">
-                Enter a URL for your service image
+                Or upload gallery images below
               </p>
+            </div>
+
+            <div className="space-y-2">
+              <Label>Gallery Images</Label>
+              <ImageUploader images={galleryImages} onChange={setGalleryImages} maxImages={5} />
             </div>
 
             <div className="flex gap-4">
