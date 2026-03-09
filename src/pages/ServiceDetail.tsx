@@ -13,7 +13,7 @@ import { useServiceImages } from "@/hooks/useServiceImages";
 import { useAuth } from "@/hooks/useAuth";
 import { ReviewSection } from "@/components/review/ReviewSection";
 import { ImageGallery } from "@/components/service/ImageGallery";
-import { MapPin, ChevronLeft, CheckCircle2, Loader2, Mail } from "lucide-react";
+import { MapPin, ChevronLeft, CheckCircle2, Loader2, Mail, PackageSearch } from "lucide-react";
 import { toast } from "sonner";
 import { z } from "zod";
 
