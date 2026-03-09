@@ -188,11 +188,14 @@ export function useSearchServices(options: UseSearchServicesOptions = {}) {
   });
 }
 
+const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
 export function useServiceById(id: string | undefined) {
   return useQuery({
     queryKey: ["service", id],
     queryFn: async (): Promise<ServiceWithRelations | null> => {
       if (!id) return null;
+      if (!UUID_REGEX.test(id)) return null;
       
       const { data, error } = await supabase
         .from("services")

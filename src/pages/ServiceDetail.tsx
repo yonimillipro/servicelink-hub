@@ -27,7 +27,7 @@ const inquirySchema = z.object({
 const ServiceDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { data: service, isLoading } = useServiceById(id);
+  const { data: service, isLoading, isError } = useServiceById(id);
   const { data: galleryImages } = useServiceImages(id);
   const createInquiry = useCreateInquiry();
   const { user } = useAuth();
@@ -96,7 +96,7 @@ const ServiceDetail = () => {
     );
   }
 
-  if (!service) {
+  if (!service || isError) {
     return (
       <Layout>
         <div className="container-padded flex min-h-[50vh] flex-col items-center justify-center text-center">
