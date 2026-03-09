@@ -291,6 +291,10 @@ export function Header() {
                      <Heart className="h-4 w-4" />
                      Saved Services
                    </Link>
+                   <Link to="/settings" className="flex items-center gap-3 rounded-lg px-4 py-2.5 text-sm font-medium text-foreground hover:bg-secondary">
+                     <Settings className="h-4 w-4" />
+                     Settings
+                   </Link>
                    <button
                      onClick={() => { signOut(); setIsMenuOpen(false); }}
                      className="flex items-center gap-3 rounded-lg px-4 py-2.5 text-left text-sm font-medium text-destructive hover:bg-destructive/5"
