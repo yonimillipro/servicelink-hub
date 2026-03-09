@@ -26,6 +26,7 @@ import Blog from "./pages/Blog";
 import CookiePolicy from "./pages/CookiePolicy";
 import SavedServices from "./pages/SavedServices";
 import Profile from "./pages/Profile";
+import Settings from "./pages/Settings";
 
 // Provider dashboard pages
 import Dashboard from "./pages/dashboard/Dashboard";
@@ -66,6 +67,7 @@ const App = () => (
               <Route path="/categories" element={<Categories />} />
               <Route path="/categories/:slug" element={<CategoryRedirect />} />
               <Route path="/companies/:id" element={<CompanyProfile />} />
+              <Route path="/providers/:id" element={<CompanyProfile />} />
               <Route path="/search" element={<SearchPage />} />
               <Route path="/about" element={<About />} />
               <Route path="/contact" element={<Contact />} />
@@ -74,14 +76,13 @@ const App = () => (
               <Route path="/careers" element={<Careers />} />
               <Route path="/blog" element={<Blog />} />
               <Route path="/cookies" element={<CookiePolicy />} />
-              <Route path="/terms" element={<Terms />} />
 
               {/* Auth Routes */}
               <Route path="/login" element={<Auth />} />
               <Route path="/register" element={<Auth />} />
               <Route path="/forgot-password" element={<Auth />} />
 
-              {/* Saved Services (any logged-in user) */}
+              {/* Protected user routes */}
               <Route path="/saved" element={
                 <ProtectedRoute>
                   <SavedServices />
@@ -90,6 +91,11 @@ const App = () => (
               <Route path="/profile" element={
                 <ProtectedRoute>
                   <Profile />
+                </ProtectedRoute>
+              } />
+              <Route path="/settings" element={
+                <ProtectedRoute>
+                  <Settings />
                 </ProtectedRoute>
               } />
 

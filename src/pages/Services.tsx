@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { EmptyState } from "@/components/ui/empty-state";
 import { StaggerGrid, MotionCard } from "@/components/ui/motion";
 import { FilterPanel } from "@/components/service/FilterPanel";
-import { useServices } from "@/hooks/useServices";
+import { useSearchServices } from "@/hooks/useServices";
 import { useCategories } from "@/hooks/useCategories";
 import { Grid3X3, List, ChevronLeft, ChevronRight, SlidersHorizontal, PackageSearch } from "lucide-react";
 
@@ -30,7 +30,10 @@ const Services = () => {
   const { data: categories } = useCategories();
   const selectedCategory = categories?.find((c) => c.slug === selectedCategorySlug) || null;
 
-  const { data: result, isLoading } = useServices({
+  // Use server-side search for all queries (handles search, location, category, pagination)
+  const { data: result, isLoading } = useSearchServices({
+    query: searchQuery || undefined,
+    location: searchLocation || undefined,
     categorySlug: selectedCategorySlug || undefined,
     featured: searchParams.get("featured") === "true" || undefined,
     page: currentPage,
@@ -39,49 +42,20 @@ const Services = () => {
 
   let services = result?.data || [];
 
-  if (searchQuery) {
-    const q = searchQuery.toLowerCase();
-    services = services.filter(s =>
-      s.title.toLowerCase().includes(q) ||
-      (s.description && s.description.toLowerCase().includes(q))
-    );
-  }
-  if (searchLocation) {
-    const loc = searchLocation.toLowerCase();
-    services = services.filter(s =>
-      s.location && s.location.toLowerCase().includes(loc)
-    );
-  }
+  // Client-side filters that aren't in the RPC
   if (verifiedOnly) {
     services = services.filter(s => s.companies?.verified);
   }
 
-  services = [...services].sort((a, b) => {
-    if (a.is_featured && !b.is_featured) return -1;
-    if (!a.is_featured && b.is_featured) return 1;
-    return 0;
-  });
-
+  // Client-side sorting (featured first is already handled server-side)
   if (sortBy === "newest") {
-    services.sort((a, b) => {
-      if (a.is_featured !== b.is_featured) return a.is_featured ? -1 : 1;
-      return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
-    });
+    services = [...services].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
   } else if (sortBy === "oldest") {
-    services.sort((a, b) => {
-      if (a.is_featured !== b.is_featured) return a.is_featured ? -1 : 1;
-      return new Date(a.created_at).getTime() - new Date(b.created_at).getTime();
-    });
+    services = [...services].sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime());
   } else if (sortBy === "price-low") {
-    services.sort((a, b) => {
-      if (a.is_featured !== b.is_featured) return a.is_featured ? -1 : 1;
-      return (a.price ?? 0) - (b.price ?? 0);
-    });
+    services = [...services].sort((a, b) => (a.price ?? 0) - (b.price ?? 0));
   } else if (sortBy === "price-high") {
-    services.sort((a, b) => {
-      if (a.is_featured !== b.is_featured) return a.is_featured ? -1 : 1;
-      return (b.price ?? 0) - (a.price ?? 0);
-    });
+    services = [...services].sort((a, b) => (b.price ?? 0) - (a.price ?? 0));
   }
 
   const totalPages = result?.totalPages ?? 1;
