@@ -1,5 +1,5 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { Search, Menu, X, LogOut, ChevronDown, Heart, UserCircle, LayoutDashboard, ShieldCheck } from "lucide-react";
+import { Search, Menu, X, LogOut, ChevronDown, Heart, UserCircle, LayoutDashboard, ShieldCheck, Settings } from "lucide-react";
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -163,6 +163,12 @@ export function Header() {
                         Saved Services
                       </Link>
                     </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                      <Link to="/settings" className="flex items-center gap-2">
+                        <Settings className="h-4 w-4" />
+                        Settings
+                      </Link>
+                    </DropdownMenuItem>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem onClick={signOut} className="flex items-center gap-2">
                       <LogOut className="h-4 w-4" />
@@ -284,6 +290,10 @@ export function Header() {
                    <Link to="/saved" className="flex items-center gap-3 rounded-lg px-4 py-2.5 text-sm font-medium text-foreground hover:bg-secondary">
                      <Heart className="h-4 w-4" />
                      Saved Services
+                   </Link>
+                   <Link to="/settings" className="flex items-center gap-3 rounded-lg px-4 py-2.5 text-sm font-medium text-foreground hover:bg-secondary">
+                     <Settings className="h-4 w-4" />
+                     Settings
                    </Link>
                    <button
                      onClick={() => { signOut(); setIsMenuOpen(false); }}

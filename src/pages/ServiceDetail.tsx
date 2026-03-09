@@ -13,7 +13,7 @@ import { useServiceImages } from "@/hooks/useServiceImages";
 import { useAuth } from "@/hooks/useAuth";
 import { ReviewSection } from "@/components/review/ReviewSection";
 import { ImageGallery } from "@/components/service/ImageGallery";
-import { MapPin, ChevronLeft, CheckCircle2, Loader2, Mail } from "lucide-react";
+import { MapPin, ChevronLeft, CheckCircle2, Loader2, Mail, PackageSearch } from "lucide-react";
 import { toast } from "sonner";
 import { z } from "zod";
 
@@ -99,9 +99,18 @@ const ServiceDetail = () => {
   if (!service) {
     return (
       <Layout>
-        <div className="container-padded flex min-h-[50vh] flex-col items-center justify-center">
-          <h2 className="text-foreground">Service Not Found</h2>
-          <Link to="/services"><Button className="mt-4">Browse Services</Button></Link>
+        <div className="container-padded flex min-h-[50vh] flex-col items-center justify-center text-center">
+          <div className="flex h-16 w-16 items-center justify-center rounded-full bg-muted">
+            <PackageSearch className="h-8 w-8 text-muted-foreground" />
+          </div>
+          <h2 className="mt-4 text-xl font-bold text-foreground">Service Not Found</h2>
+          <p className="mt-2 max-w-md text-muted-foreground">
+            This service may have been removed or is currently unavailable.
+          </p>
+          <div className="mt-6 flex gap-3">
+            <Link to="/services"><Button>Browse Services</Button></Link>
+            <Button variant="outline" onClick={() => navigate(-1)}>Go Back</Button>
+          </div>
         </div>
       </Layout>
     );
