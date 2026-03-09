@@ -96,7 +96,7 @@ const ServiceDetail = () => {
     );
   }
 
-  if (!service) {
+  if (!service || isError) {
     return (
       <Layout>
         <div className="container-padded flex min-h-[50vh] flex-col items-center justify-center text-center">
