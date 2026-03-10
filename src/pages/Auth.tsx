@@ -49,12 +49,22 @@ export default function Auth() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
+  const { roles } = useAuth();
+
   useEffect(() => {
     if (user && !authLoading) {
-      const from = (location.state as { from?: Location })?.from?.pathname || "/";
-      navigate(from, { replace: true });
+      const from = (location.state as { from?: Location })?.from?.pathname;
+      if (from) {
+        navigate(from, { replace: true });
+      } else if (roles.includes("admin")) {
+        navigate("/admin", { replace: true });
+      } else if (roles.includes("provider")) {
+        navigate("/dashboard", { replace: true });
+      } else {
+        navigate("/", { replace: true });
+      }
     }
-  }, [user, authLoading, navigate, location.state]);
+  }, [user, authLoading, roles, navigate, location.state]);
 
   useEffect(() => {
     if (location.pathname === "/register") setMode("register");
