@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 import { AdminLayout } from "@/components/admin/AdminLayout";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -24,6 +25,7 @@ export default function AdminServices() {
     useServices({ status: "rejected" });
   const rejectedServices = rejectedResult?.data;
   
+  const queryClient = useQueryClient();
   const updateService = useUpdateService();
 
   const handleApprove = async (id: string) => {
@@ -48,12 +50,39 @@ export default function AdminServices() {
     }
   };
 
-  const handleFeature = async (id: string, isFeatured: boolean) => {
+  const handleFeature = async (id: string, currentFeatured: boolean) => {
+    const newFeatured = !currentFeatured;
+    // Optimistic update
+    queryClient.setQueryData(
+      ["services", { status: "approved" }],
+      (old: any) => {
+        if (!old?.data) return old;
+        return {
+          ...old,
+          data: old.data.map((s: any) =>
+            s.id === id ? { ...s, is_featured: newFeatured } : s
+          ),
+        };
+      }
+    );
+
     try {
-      await updateService.mutateAsync({ id, is_featured: !isFeatured });
-      toast.success(isFeatured ? "Removed from featured" : "Added to featured");
-      refetchApproved();
+      await updateService.mutateAsync({ id, is_featured: newFeatured });
+      toast.success(newFeatured ? "Added to featured" : "Removed from featured");
     } catch {
+      // Revert on failure
+      queryClient.setQueryData(
+        ["services", { status: "approved" }],
+        (old: any) => {
+          if (!old?.data) return old;
+          return {
+            ...old,
+            data: old.data.map((s: any) =>
+              s.id === id ? { ...s, is_featured: currentFeatured } : s
+            ),
+          };
+        }
+      );
       toast.error("Failed to update featured status");
     }
   };

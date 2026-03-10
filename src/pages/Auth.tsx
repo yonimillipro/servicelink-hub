@@ -30,7 +30,7 @@ type AuthMode = "login" | "register" | "forgot-password";
 export default function Auth() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { user, signIn, signUp, isLoading: authLoading } = useAuth();
+  const { user, signIn, signUp, isLoading: authLoading, roles: userRoles } = useAuth();
 
   const [mode, setMode] = useState<AuthMode>(() => {
     if (location.pathname === "/register") return "register";
@@ -51,10 +51,18 @@ export default function Auth() {
 
   useEffect(() => {
     if (user && !authLoading) {
-      const from = (location.state as { from?: Location })?.from?.pathname || "/";
-      navigate(from, { replace: true });
+      const from = (location.state as { from?: Location })?.from?.pathname;
+      if (from) {
+        navigate(from, { replace: true });
+      } else if (userRoles.includes("admin")) {
+        navigate("/admin", { replace: true });
+      } else if (userRoles.includes("provider")) {
+        navigate("/dashboard", { replace: true });
+      } else {
+        navigate("/", { replace: true });
+      }
     }
-  }, [user, authLoading, navigate, location.state]);
+  }, [user, authLoading, userRoles, navigate, location.state]);
 
   useEffect(() => {
     if (location.pathname === "/register") setMode("register");

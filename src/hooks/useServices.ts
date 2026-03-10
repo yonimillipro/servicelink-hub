@@ -211,6 +211,7 @@ export function useServiceById(id: string | undefined) {
       return data as ServiceWithRelations | null;
     },
     enabled: !!id,
+    retry: false,
   });
 }
 
