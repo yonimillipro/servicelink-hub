@@ -7,11 +7,13 @@ type Company = Database["public"]["Tables"]["companies"]["Row"];
 type CompanyInsert = Database["public"]["Tables"]["companies"]["Insert"];
 type CompanyUpdate = Database["public"]["Tables"]["companies"]["Update"];
 
+const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
 export function useCompanyById(id: string | undefined) {
   return useQuery({
     queryKey: ["company", id],
     queryFn: async (): Promise<Company | null> => {
-      if (!id) return null;
+      if (!id || !UUID_REGEX.test(id)) return null;
       
       const { data, error } = await supabase
         .from("companies")
@@ -23,6 +25,7 @@ export function useCompanyById(id: string | undefined) {
       return data;
     },
     enabled: !!id,
+    retry: false,
   });
 }
 

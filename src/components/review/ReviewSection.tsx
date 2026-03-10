@@ -12,10 +12,13 @@ interface ReviewSectionProps {
 }
 
 export function ReviewSection({ serviceId }: ReviewSectionProps) {
-  const { user } = useAuth();
+  const { user, isAdmin, isProvider } = useAuth();
   const { data: reviews, isLoading } = useReviews(serviceId);
   const { data: stats } = useReviewStats(serviceId);
   const { data: userReview } = useUserReview(serviceId, user?.id);
+
+  // Only regular users can review — not providers or admins
+  const canReview = !!user && !isAdmin && !isProvider;
 
   if (isLoading) {
     return (
@@ -46,7 +49,7 @@ export function ReviewSection({ serviceId }: ReviewSectionProps) {
       )}
 
       {/* Review Form */}
-      {user ? (
+      {canReview ? (
         userReview ? (
           <p className="text-sm text-muted-foreground mb-6 p-3 rounded-lg bg-muted/30">
             ✓ You have already reviewed this service.
@@ -54,9 +57,13 @@ export function ReviewSection({ serviceId }: ReviewSectionProps) {
         ) : (
           <div className="mb-6 p-4 rounded-lg border border-border">
             <h4 className="text-sm font-medium text-foreground mb-3">Write a Review</h4>
-            <ReviewForm serviceId={serviceId} userId={user.id} />
+            <ReviewForm serviceId={serviceId} userId={user!.id} />
           </div>
         )
+      ) : user ? (
+        <p className="text-sm text-muted-foreground mb-6 p-3 rounded-lg bg-muted/30">
+          Only customers can leave reviews.
+        </p>
       ) : (
         <p className="text-sm text-muted-foreground mb-6">
           <Link to="/login" className="text-primary hover:underline">Sign in</Link> to leave a review.

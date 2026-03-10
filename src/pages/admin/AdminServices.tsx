@@ -25,6 +25,7 @@ export default function AdminServices() {
     useServices({ status: "rejected" });
   const rejectedServices = rejectedResult?.data;
   
+  const queryClient = useQueryClient();
   const updateService = useUpdateService();
 
   const handleApprove = async (id: string) => {
