@@ -30,7 +30,7 @@ type AuthMode = "login" | "register" | "forgot-password";
 export default function Auth() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { user, signIn, signUp, isLoading: authLoading, roles } = useAuth();
+  const { user, signIn, signUp, isLoading: authLoading, roles: userRoles } = useAuth();
 
   const [mode, setMode] = useState<AuthMode>(() => {
     if (location.pathname === "/register") return "register";
